@@ -120,7 +120,6 @@ public class Main {
                         email = lineReader.readLine();
                         System.out.println("Podaj nazwę: ");
                         name = lineReader.readLine();
-
                         System.out.println("Podaj miasto: ");
                         city = lineReader.readLine();
                         System.out.println("Podaj rolę: ");
@@ -130,10 +129,9 @@ public class Main {
 
                         String UpdatejsonInput = String.format("{\"email\": \"%s\",\"name\": \"%s\", \"city\": \"%s\", \"role\": \"%s\", \"password\": \"%s\"}", email, name, city, role, password);
 
-                        sendPostRequest("/auth/register", UpdatejsonInput, null);
-
-                        String updateUserData = lineReader.readLine();
-                        sendPutRequest("/admin/update/" + userIdToUpdate, updateUserData, token);
+                        // Wydrukuj dane do aktualizacji dla debugowania
+                        System.out.println("Wysyłane dane do aktualizacji: " + UpdatejsonInput);
+                        sendPutRequest("/admin/update/" + userIdToUpdate, UpdatejsonInput, token);
                         break;
 
                     case "8":
@@ -178,6 +176,8 @@ public class Main {
                             System.out.println("Odpowiedź z dodawania zamówienia: " + addOrderResponse);
                         }
                         break;
+
+
 
                     case "11":
                         System.out.print("Podaj ID zamówienia do usunięcia: ");
@@ -311,6 +311,22 @@ public class Main {
 
             int responseCode = conn.getResponseCode();
             System.out.println("PUT request response code: " + responseCode);
+
+            // Odczyt odpowiedzi
+            StringBuilder responseBuilder = new StringBuilder();
+            try (InputStream responseStream = conn.getInputStream();
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(responseStream))) {
+                String responseLine;
+                while ((responseLine = reader.readLine()) != null) {
+                    responseBuilder.append(responseLine);
+                }
+            }
+            String response = responseBuilder.toString();
+            System.out.println("Odpowiedź z PUT: " + response);
+
+            if (responseCode != HttpURLConnection.HTTP_OK && responseCode != HttpURLConnection.HTTP_CREATED) {
+                System.out.println("Błąd w PUT: " + responseCode + ", odpowiedź: " + response);
+            }
         } catch (IOException e) {
             System.out.println("Błąd podczas wysyłania PUT: " + e.getMessage());
         } finally {
