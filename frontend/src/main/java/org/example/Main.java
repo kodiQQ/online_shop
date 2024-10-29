@@ -154,24 +154,38 @@ public class Main {
 
                         System.out.print("Podaj dane zamówienia do dodania\n");
 
-                        System.out.println("Podaj ID użytkownika: ");
-                        String userId = lineReader.readLine();
+//                        System.out.println("Podaj ID użytkownika: ");
+//                        String userId = lineReader.readLine();
 
-                        System.out.println("Podaj liczbę produktów w zamówieniu: ");
-                        int productCount = Integer.parseInt(lineReader.readLine());
+//                        System.out.println("Podaj liczbę produktów w zamówieniu: ");
+//                        int productCount = Integer.parseInt(lineReader.readLine());
 
-                        List<String> productIds = new ArrayList<>();
-                        for (int i = 0; i < productCount; i++) {
-                            System.out.println("Podaj ID produktu " + (i + 1) + ": ");
+                        List<String> productIds = new ArrayList<String>();
+                        int i=0;
+                        while(true) {
+                            i=i+1;
+                            System.out.println("Podaj ID produktu " + (i) + ": \n(wpisz \"x\", aby zakończyć dodawanie)");
                             String productId = lineReader.readLine();
-                            productIds.add("\"" + productId + "\"");  // Dodajemy ID produktu w cudzysłowie dla formatu JSON
+                            if(productId.equals("x")) {
+                                break;
+                            }
+                            productIds.add(productId);  // Dodajemy ID produktu w cudzysłowie dla formatu JSON
                         }
+                        String productsJsonArray = "{\"products_id_list\": [";
 
                         // Tworzymy tablicę JSON ręcznie, aby mieć pełną kontrolę nad formatem
-                        String productsJsonArray = "[" + String.join(", ", productIds) + "]";
-                        String orderJsonInput = String.format("{\"userId\": \"%s\", \"productIds\": %s}", userId, productsJsonArray);
+                        for(i=0;i<productIds.size();i++) {
+                            productsJsonArray = productsJsonArray + productIds.get(i);
+                            if(i!=productIds.size()-1){
+                                productsJsonArray = productsJsonArray + ",";
+                            }
 
-                        String addOrderResponse = sendPostRequest("/adminuser/add_order", orderJsonInput, token);
+                        }
+                        productsJsonArray = productsJsonArray + "]}";
+
+//                        String orderJsonInput = String.format("{\"userId\": \"%s\", \"productIds\": %s}", userId, productsJsonArray);
+
+                        String addOrderResponse = sendPostRequest("/adminuser/add_order",productsJsonArray, token);
                         if (addOrderResponse != null) {
                             System.out.println("Odpowiedź z dodawania zamówienia: " + addOrderResponse);
                         }
