@@ -1,582 +1,416 @@
-//package org.example;
-//
-//import org.jline.reader.LineReader;
-//import org.jline.reader.LineReaderBuilder;
-//import org.jline.reader.UserInterruptException;
-//import org.jline.reader.EndOfFileException;
-//import org.json.JSONArray;
-//import org.json.JSONObject;
-//
-//import java.io.BufferedReader;
-//import java.io.IOException;
-//import java.io.InputStream;
-//import java.io.InputStreamReader;
-//import java.net.HttpURLConnection;
-//import java.net.URL;
-//import java.util.stream.Collectors;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//
-//
-//public class Main {
-//    private static final String BASE_URL = "http://localhost:8080";
-//
-//    public static void main(String[] args) {
-//        try {
-//            LineReader lineReader = LineReaderBuilder.builder().build();
-//            String token = null;
-//
-//            while (true) {
-//                System.out.println("\nWybierz opcję:");
-//                System.out.println("1. Zarejestruj użytkownika");
-//                System.out.println("2. Zaloguj się");
-//                System.out.println("3. Dodaj produkt (administrator)");
-//                System.out.println("4. Pobierz wszystkie produkty (administrator)");
-//                System.out.println("5. Pobierz wszystkich użytkowników (administrator)");
-//                System.out.println("6. Pobierz użytkownika po ID (administrator)");
-//                System.out.println("7. Zaktualizuj użytkownika (administrator)");
-//                System.out.println("8. Usuń użytkownika (administrator)");
-//                System.out.println("9. Usuń produkt (administrator)");
-//                System.out.println("10. Dodaj zamówienie (użytkownik)");
-//                System.out.println("11. Usuń zamówienie (administrator)");
-//                System.out.println("0. Wyjdź");
-//
-//                String input = lineReader.readLine("> ");
-//
-//                switch (input) {
-//                    case "1":
-//                        System.out.print("Podaj dane rejestracji\n ");
-//
-//                        System.out.println("Podaj email: ");
-//                        String email = lineReader.readLine();
-//                        System.out.println("Podaj nazwę: ");
-//                        String name = lineReader.readLine();
-//                        System.out.println("Podaj hasło: ");
-//                        String password = lineReader.readLine();
-//                        System.out.println("Podaj miasto: ");
-//                        String city = lineReader.readLine();
-//                        System.out.println("Podaj rolę: ");
-//                        String role = lineReader.readLine();
-//
-//                        String RegisterjsonInput = String.format("{\"email\": \"%s\",\"name\": \"%s\", \"password\": \"%s\", \"city\": \"%s\", \"role\": \"%s\"}", email, name, password, city, role);
-//
-//                        sendPostRequest("/auth/register", RegisterjsonInput, null);
-//                        break;
-//
-//                    case "2":
-//                        System.out.print("Podaj dane logowania\n ");
-//
-//                        System.out.println("Podaj email: ");
-//                        email = lineReader.readLine();
-//                        System.out.println("Podaj hasło: ");
-//                        password = lineReader.readLine();
-//
-//                        String LoginjsonInput = String.format("{\"email\": \"%s\", \"password\": \"%s\"}", email, password);
-//                        String json = sendPostRequest("/auth/login", LoginjsonInput, null);
-//
-//                        JSONObject jsonObject = new JSONObject(json);
-//                        token = jsonObject.getString("token");
-//                        break;
-//
-//                    case "3":
-//                        System.out.print("Podaj dane produktu do dodania\n ");
-//
-//                        System.out.println("Podaj nazwę produktu: ");
-//                        String productName = lineReader.readLine();
-//                        System.out.println("Podaj kategorię: ");
-//                        String category = lineReader.readLine();
-//                        System.out.println("Podaj cenę: ");
-//                        String price = lineReader.readLine();
-//
-//                        String ProductjsonInput = String.format("{\"name\": \"%s\", \"category\": \"%s\", \"price\": \"%s\"}", productName, category, price);
-//
-//                        String addProductResponse = sendPostRequest("/admin/add-product", ProductjsonInput, token);
-//                        if (addProductResponse != null) {
-//                            System.out.println("Odpowiedź z dodawania produktu: " + addProductResponse);
-//                        }
-//                        break;
-//
-//                    case "4":
-//                        sendGetRequest("/admin/get-all-products", token);
-//                        break;
-//
-//                    case "5":
-//                        sendGetRequest("/admin/get-all-users", token);
-//                        break;
-//
-//                    case "6":
-//                        System.out.print("Podaj ID użytkownika: ");
-//                        String userIdToFetch = lineReader.readLine();
-//                        sendGetRequest("/admin/get-users/" + userIdToFetch, token);
-//                        break;
-//
-//                    case "7":
-//                        System.out.print("Podaj ID użytkownika do aktualizacji: ");
-//                        String userIdToUpdate = lineReader.readLine();
-//                        System.out.print("Podaj nowe dane użytkownika : ");
-//
-//                        System.out.println("Podaj email: ");
-//                        email = lineReader.readLine();
-//                        System.out.println("Podaj nazwę: ");
-//                        name = lineReader.readLine();
-//                        System.out.println("Podaj miasto: ");
-//                        city = lineReader.readLine();
-//                        System.out.println("Podaj rolę: ");
-//                        role = lineReader.readLine();
-//                        System.out.println("Podaj hasło: ");
-//                        password = lineReader.readLine();
-//
-//                        String UpdatejsonInput = String.format("{\"email\": \"%s\",\"name\": \"%s\", \"city\": \"%s\", \"role\": \"%s\", \"password\": \"%s\"}", email, name, city, role, password);
-//
-//                        // Wydrukuj dane do aktualizacji dla debugowania
-//                        System.out.println("Wysyłane dane do aktualizacji: " + UpdatejsonInput);
-//                        sendPutRequest("/admin/update/" + userIdToUpdate, UpdatejsonInput, token);
-//                        break;
-//
-//                    case "8":
-//                        System.out.print("Podaj ID użytkownika do usunięcia: ");
-//                        String userIdToDelete = lineReader.readLine();
-//                        sendDeleteRequest("/admin/delete-user/" + userIdToDelete, token);
-//                        break;
-//
-//                    case "9":
-//                        System.out.print("Podaj ID produktu do usunięcia: ");
-//                        String productIdToDelete = lineReader.readLine();
-//                        sendDeleteRequest("/admin/delete-product/" + productIdToDelete, token);
-//                        break;
-//
-//                    case "10":
-////                        System.out.print("Podaj dane zamówienia do dodania (JSON): ");
-////                        String addOrderData = lineReader.readLine();
-////                        sendPostRequest("/adminuser/add_order", addOrderData, token);
-////                        break;
-//
-//                        System.out.print("Podaj dane zamówienia do dodania\n");
-//
-////                        System.out.println("Podaj ID użytkownika: ");
-////                        String userId = lineReader.readLine();
-//
-////                        System.out.println("Podaj liczbę produktów w zamówieniu: ");
-////                        int productCount = Integer.parseInt(lineReader.readLine());
-//
-//                        List<String> productIds = new ArrayList<String>();
-//                        int i=0;
-//                        while(true) {
-//                            i=i+1;
-//                            System.out.println("Podaj ID produktu " + (i) + ": \n(wpisz \"x\", aby zakończyć dodawanie)");
-//                            String productId = lineReader.readLine();
-//                            if(productId.equals("x")) {
-//                                break;
-//                            }
-//                            productIds.add(productId);  // Dodajemy ID produktu w cudzysłowie dla formatu JSON
-//                        }
-//                        String productsJsonArray = "{\"products_id_list\": [";
-//
-//                        // Tworzymy tablicę JSON ręcznie, aby mieć pełną kontrolę nad formatem
-//                        for(i=0;i<productIds.size();i++) {
-//                            productsJsonArray = productsJsonArray + productIds.get(i);
-//                            if(i!=productIds.size()-1){
-//                                productsJsonArray = productsJsonArray + ",";
-//                            }
-//
-//                        }
-//                        productsJsonArray = productsJsonArray + "]}";
-//
-////                        String orderJsonInput = String.format("{\"userId\": \"%s\", \"productIds\": %s}", userId, productsJsonArray);
-//
-//                        String addOrderResponse = sendPostRequest("/adminuser/add_order",productsJsonArray, token);
-//                        if (addOrderResponse != null) {
-//                            System.out.println("Odpowiedź z dodawania zamówienia: " + addOrderResponse);
-//                        }
-//                        break;
-//
-//
-//
-//                    case "11":
-//                        System.out.print("Podaj ID zamówienia do usunięcia: ");
-//                        String orderIdToDelete = lineReader.readLine();
-//                        sendDeleteRequest("/admin/delete_order/" + orderIdToDelete, token);
-//                        break;
-//
-//                    case "0":
-//                        System.out.println("Do widzenia!");
-//                        return;
-//
-//                    default:
-//                        System.out.println("Nieprawidłowy wybór. Spróbuj ponownie.");
-//                }
-//            }
-//        } catch (UserInterruptException | EndOfFileException e) {
-//            System.out.println("\nWyjście z aplikacji.");
-//        }
-//    }
-//
-//
-//
-//    private static void sendGetRequest(String endpoint, String token) {
-//        HttpURLConnection conn = null;
-//        try {
-//            URL url = new URL(BASE_URL + endpoint);
-//            conn = (HttpURLConnection) url.openConnection();
-//            conn.setRequestMethod("GET");
-//            conn.setRequestProperty("Accept", "application/json");
-//            if (token != null && !token.isEmpty()) {
-//                conn.setRequestProperty("Authorization", "Bearer " + token);
-//            }
-//
-//            int responseCode = conn.getResponseCode();
-//            System.out.println("GET request response code: " + responseCode);
-//
-//            if (responseCode == HttpURLConnection.HTTP_OK) {
-//                try (InputStream responseStream = conn.getInputStream();
-//                     BufferedReader reader = new BufferedReader(new InputStreamReader(responseStream))) {
-//
-//                    // Pobranie i połączenie odpowiedzi w jeden ciąg
-//                    String response = reader.lines().collect(Collectors.joining("\n"));
-//
-//                    // Formatowanie JSON, aby wypisać z wcięciem
-//                    if (response.startsWith("[")) {
-//                        JSONArray jsonArray = new JSONArray(response);
-//                        System.out.println(jsonArray.toString(4)); // 4 oznacza poziom wcięcia
-//                    } else {
-//                        JSONObject jsonObject = new JSONObject(response);
-//                        System.out.println(jsonObject.toString(4)); // 4 oznacza poziom wcięcia
-//                    }
-//                }
-//            } else {
-//                System.out.println("Error in GET request: " + responseCode);
-//            }
-//
-//        } catch (IOException e) {
-//            System.out.println("Błąd podczas wysyłania GET: " + e.getMessage());
-//        } finally {
-//            if (conn != null) {
-//                conn.disconnect();
-//            }
-//        }
-//    }
-//
-//
-//    private static String sendPostRequest(String endpoint, String data, String token) {
-//
-//        System.out.println(token);
-//        HttpURLConnection conn = null;
-//        try {
-//            URL url = new URL(BASE_URL + endpoint);
-//            conn = (HttpURLConnection) url.openConnection();
-//            conn.setRequestMethod("POST");
-//            conn.setDoOutput(true);
-//            conn.setRequestProperty("Content-Type", "application/json");
-//            if (token != null && !token.isEmpty()) {
-//                conn.setRequestProperty("Authorization", "Bearer " + token);
-//            }
-//
-//            // Wysłanie danych JSON
-//            try (var os = conn.getOutputStream()) {
-//                byte[] input = data.getBytes("utf-8");
-//                os.write(input, 0, input.length);
-//            }
-//
-//            int responseCode = conn.getResponseCode();
-//            System.out.println("POST request response code: " + responseCode);
-//
-//            // Odczyt odpowiedzi serwera
-//            StringBuilder responseBuilder = new StringBuilder();
-//            try (InputStream responseStream = conn.getInputStream();
-//                 BufferedReader reader = new BufferedReader(new InputStreamReader(responseStream))) {
-//                String responseLine;
-//                while ((responseLine = reader.readLine()) != null) {
-//                    responseBuilder.append(responseLine);
-//                }
-//            }
-//            String response = responseBuilder.toString();
-//            if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
-//                return response;
-//            } else {
-//                System.out.println("Error in POST request: " + responseCode + ", response: " + response);
-//            }
-//        } catch (IOException e) {
-//            System.out.println("Błąd podczas wysyłania POST: " + e.getMessage());
-//        } finally {
-//            if (conn != null) {
-//                conn.disconnect();
-//            }
-//        }
-//        return null;
-//    }
-//
-//    private static void sendPutRequest(String endpoint, String data, String token) {
-//        HttpURLConnection conn = null;
-//        try {
-//            URL url = new URL(BASE_URL + endpoint);
-//            conn = (HttpURLConnection) url.openConnection();
-//            conn.setRequestMethod("PUT");
-//            conn.setDoOutput(true);
-//            conn.setRequestProperty("Content-Type", "application/json");
-//            if (token != null && !token.isEmpty()) {
-//                conn.setRequestProperty("Authorization", "Bearer " + token);
-//            }
-//
-//            try (var os = conn.getOutputStream()) {
-//                byte[] input = data.getBytes("utf-8");
-//                os.write(input, 0, input.length);
-//            }
-//
-//            int responseCode = conn.getResponseCode();
-//            System.out.println("PUT request response code: " + responseCode);
-//
-//            // Odczyt odpowiedzi
-//            StringBuilder responseBuilder = new StringBuilder();
-//            try (InputStream responseStream = conn.getInputStream();
-//                 BufferedReader reader = new BufferedReader(new InputStreamReader(responseStream))) {
-//                String responseLine;
-//                while ((responseLine = reader.readLine()) != null) {
-//                    responseBuilder.append(responseLine);
-//                }
-//            }
-//            String response = responseBuilder.toString();
-//            System.out.println("Odpowiedź z PUT: " + response);
-//
-//            if (responseCode != HttpURLConnection.HTTP_OK && responseCode != HttpURLConnection.HTTP_CREATED) {
-//                System.out.println("Błąd w PUT: " + responseCode + ", odpowiedź: " + response);
-//            }
-//        } catch (IOException e) {
-//            System.out.println("Błąd podczas wysyłania PUT: " + e.getMessage());
-//        } finally {
-//            if (conn != null) {
-//                conn.disconnect();
-//            }
-//        }
-//    }
-//
-//    private static void sendDeleteRequest(String endpoint, String token) {
-//        HttpURLConnection conn = null;
-//        try {
-//            URL url = new URL(BASE_URL + endpoint);
-//            conn = (HttpURLConnection) url.openConnection();
-//            conn.setRequestMethod("DELETE");
-//            if (token != null && !token.isEmpty()) {
-//                conn.setRequestProperty("Authorization", "Bearer " + token);
-//            }
-//
-//            int responseCode = conn.getResponseCode();
-//            System.out.println("DELETE request response code: " + responseCode);
-//        } catch (IOException e) {
-//            System.out.println("Błąd podczas wysyłania DELETE: " + e.getMessage());
-//        } finally {
-//            if (conn != null) {
-//                conn.disconnect();
-//            }
-//        }
-//    }
-//}
-
-
-
 package org.example;
 
-import javax.swing.*;
-        import java.awt.*;
-        import java.awt.event.ActionEvent;
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class Main {
     private static final String BASE_URL = "http://localhost:8080";
-    private String token = null;
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(Main::new);
-    }
 
-    public Main() {
-        JFrame frame = new JFrame("Menu aplikacji");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 400);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(12, 1));
+    public static void main(String[] args) throws IOException {
+        Screen screen = new DefaultTerminalFactory().createScreen();
+        screen.startScreen();
 
-        JButton registerButton = new JButton("1. Zarejestruj użytkownika");
-        JButton loginButton = new JButton("2. Zaloguj się");
-        JButton addProductButton = new JButton("3. Dodaj produkt (administrator)");
-        JButton getAllProductsButton = new JButton("4. Pobierz wszystkie produkty (administrator)");
-        JButton getAllUsersButton = new JButton("5. Pobierz wszystkich użytkowników (administrator)");
-        JButton getUserByIdButton = new JButton("6. Pobierz użytkownika po ID (administrator)");
-        JButton updateUserButton = new JButton("7. Zaktualizuj użytkownika (administrator)");
-        JButton deleteUserButton = new JButton("8. Usuń użytkownika (administrator)");
-        JButton deleteProductButton = new JButton("9. Usuń produkt (administrator)");
-        JButton addOrderButton = new JButton("10. Dodaj zamówienie (użytkownik)");
-        JButton deleteOrderButton = new JButton("11. Usuń zamówienie (administrator)");
-        JButton exitButton = new JButton("0. Wyjdź");
+        MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLUE));
+        Window window = new BasicWindow("Menu aplikacji");
 
-        panel.add(registerButton);
-        panel.add(loginButton);
-        panel.add(addProductButton);
-        panel.add(getAllProductsButton);
-        panel.add(getAllUsersButton);
-        panel.add(getUserByIdButton);
-        panel.add(updateUserButton);
-        panel.add(deleteUserButton);
-        panel.add(deleteProductButton);
-        panel.add(addOrderButton);
-        panel.add(deleteOrderButton);
-        panel.add(exitButton);
+        Panel panel = new Panel();
+        panel.setLayoutManager(new GridLayout(1));
 
-        frame.add(panel);
-        frame.setVisible(true);
+        Label label = new Label("Wybierz opcję z menu:");
+        panel.addComponent(label);
 
-        registerButton.addActionListener(this::registerUser);
-        loginButton.addActionListener(this::login);
-        addProductButton.addActionListener(this::addProduct);
-        getAllProductsButton.addActionListener(e -> sendGetRequest("/admin/get-all-products", token));
-        getAllUsersButton.addActionListener(e -> sendGetRequest("/admin/get-all-users", token));
-        getUserByIdButton.addActionListener(this::getUserById);
-        updateUserButton.addActionListener(this::updateUser);
-        deleteUserButton.addActionListener(this::deleteUser);
-        deleteProductButton.addActionListener(this::deleteProduct);
-        addOrderButton.addActionListener(this::addOrder);
-        deleteOrderButton.addActionListener(this::deleteOrder);
-        exitButton.addActionListener(e -> System.exit(0));
-    }
+        String[] options = {
+                "1. Zarejestruj użytkownika",
+                "2. Zaloguj się",
+                "3. Dodaj produkt (administrator)",
+                "4. Pobierz wszystkie produkty (administrator)",
+                "5. Pobierz wszystkich użytkowników (administrator)",
+                "6. Pobierz użytkownika po ID (administrator)",
+                "7. Zaktualizuj użytkownika (administrator)",
+                "8. Usuń użytkownika (administrator)",
+                "9. Usuń produkt (administrator)",
+                "10. Dodaj zamówienie (użytkownik)",
+                "11. Usuń zamówienie (administrator)",
+                "0. Wyjdź"
+        };
 
-    private void registerUser(ActionEvent e) {
-        String email = JOptionPane.showInputDialog("Podaj email:");
-        String name = JOptionPane.showInputDialog("Podaj nazwę:");
-        String password = JOptionPane.showInputDialog("Podaj hasło:");
-        String city = JOptionPane.showInputDialog("Podaj miasto:");
-        String role = JOptionPane.showInputDialog("Podaj rolę:");
-
-        String jsonInput = String.format("{\"email\": \"%s\",\"name\": \"%s\", \"password\": \"%s\", \"city\": \"%s\", \"role\": \"%s\"}",
-                email, name, password, city, role);
-        sendPostRequest("/auth/register", jsonInput, null);
-    }
-
-    private void login(ActionEvent e) {
-        String email = JOptionPane.showInputDialog("Podaj email:");
-        String password = JOptionPane.showInputDialog("Podaj hasło:");
-
-        String jsonInput = String.format("{\"email\": \"%s\", \"password\": \"%s\"}", email, password);
-        String response = sendPostRequest("/auth/login", jsonInput, null);
-
-        if (response != null) {
-            JSONObject jsonObject = new JSONObject(response);
-            token = jsonObject.getString("token");
-            JOptionPane.showMessageDialog(null, "Zalogowano pomyślnie!");
-        }
-    }
-
-    private void addProduct(ActionEvent e) {
-        if (token == null) {
-            JOptionPane.showMessageDialog(null, "Zaloguj się jako administrator!");
-            return;
+        for (String option : options) {
+            panel.addComponent(new Button(option, () -> handleOption(option, gui, token)));
         }
 
-        String name = JOptionPane.showInputDialog("Podaj nazwę produktu:");
-        String category = JOptionPane.showInputDialog("Podaj kategorię:");
-        String price = JOptionPane.showInputDialog("Podaj cenę:");
-
-        String jsonInput = String.format("{\"name\": \"%s\", \"category\": \"%s\", \"price\": \"%s\"}",
-                name, category, price);
-        sendPostRequest("/admin/add-product", jsonInput, token);
+        window.setComponent(panel);
+        gui.addWindowAndWait(window);
+        screen.stopScreen();
     }
 
-    private void getUserById(ActionEvent e) {
-        if (token == null) {
-            JOptionPane.showMessageDialog(null, "Zaloguj się jako administrator!");
-            return;
-        }
+    private static void handleOption(String option, MultiWindowTextGUI gui, String token) {
+        try {
+            switch (option) {
+                case "1. Zarejestruj użytkownika":
+                    openRegisterWindow(gui);
+                    break;
 
-        String userId = JOptionPane.showInputDialog("Podaj ID użytkownika:");
-        sendGetRequest("/admin/get-users/" + userId, token);
-    }
+                case "2. Zaloguj się":
+                    openLoginWindow(gui);
+                    break;
 
-    private void updateUser(ActionEvent e) {
-        if (token == null) {
-            JOptionPane.showMessageDialog(null, "Zaloguj się jako administrator!");
-            return;
-        }
+                case "3. Dodaj produkt (administrator)":
+                    openAddProductWindow(gui, token);
+                    break;
 
-        String userId = JOptionPane.showInputDialog("Podaj ID użytkownika:");
-        String email = JOptionPane.showInputDialog("Podaj nowy email:");
-        String name = JOptionPane.showInputDialog("Podaj nową nazwę:");
-        String city = JOptionPane.showInputDialog("Podaj nowe miasto:");
-        String role = JOptionPane.showInputDialog("Podaj nową rolę:");
-        String password = JOptionPane.showInputDialog("Podaj nowe hasło:");
+                case "4. Pobierz wszystkie produkty (administrator)":
+                    String productsJson = sendGetRequest("/admin/get-all-products", token);  // Pobranie danych z serwera
+                    if (productsJson != null) {
+                        try {
+                            // Debugowanie: Wypisanie odpowiedzi JSON
+                            System.out.println("Odpowiedź JSON w Lanternie: " + productsJson);
 
-        String jsonInput = String.format("{\"email\": \"%s\",\"name\": \"%s\", \"city\": \"%s\", \"role\": \"%s\", \"password\": \"%s\"}",
-                email, name, city, role, password);
-        sendPutRequest("/admin/update/" + userId, jsonInput, token);
-    }
+                            // Parsowanie odpowiedzi jako obiekt JSON
+                            JSONObject jsonObject = new JSONObject(productsJson);
 
-    private void deleteUser(ActionEvent e) {
-        if (token == null) {
-            JOptionPane.showMessageDialog(null, "Zaloguj się jako administrator!");
-            return;
-        }
+                            // Sprawdzamy, czy istnieje pole "productsList" w odpowiedzi
+                            if (jsonObject.has("productsList")) {
+                                JSONArray products = jsonObject.getJSONArray("productsList");
 
-        String userId = JOptionPane.showInputDialog("Podaj ID użytkownika do usunięcia:");
-        sendDeleteRequest("/admin/delete-user/" + userId, token);
-    }
+                                StringBuilder productsList = new StringBuilder("Produkty:\n");
 
-    private void deleteProduct(ActionEvent e) {
-        if (token == null) {
-            JOptionPane.showMessageDialog(null, "Zaloguj się jako administrator!");
-            return;
-        }
+                                // Iterowanie po produktach i formatowanie tekstu
+                                for (int i = 0; i < products.length(); i++) {
+                                    JSONObject product = products.getJSONObject(i);
+                                    int id = product.getInt("id");
+                                    String name = product.getString("name");
+                                    String category = product.getString("category");
+                                    String price = product.getString("price");  // Cena jest jako String, bo może zawierać wartości takie jak "150" bez jednostki
 
-        String productId = JOptionPane.showInputDialog("Podaj ID produktu do usunięcia:");
-        sendDeleteRequest("/admin/delete-product/" + productId, token);
-    }
+                                    // Dodawanie danych do wyświetlania
+                                    productsList.append(String.format("id: %d - nazwa: %s - kategoria: %s - cena: %s\n", id, name, category, price));
+                                }
 
-    private void addOrder(ActionEvent e) {
-        if (token == null) {
-            JOptionPane.showMessageDialog(null, "Zaloguj się jako użytkownik!");
-            return;
-        }
+                                // Wyświetlanie produktów w oknie Lanterny
+                                showInfoMessage(gui, "Produkty", productsList.toString());
+                            } else {
+                                showInfoMessage(gui, "Błąd", "Brak danych produktów w odpowiedzi.");
+                            }
+                        } catch (JSONException e) {
+                            // Obsługa sytuacji, gdy nie udało się sparsować odpowiedzi
+                            showInfoMessage(gui, "Błąd", "Błąd podczas parsowania odpowiedzi JSON.");
+                        }
+                    } else {
+                        // Obsługa sytuacji, gdy nie udało się pobrać produktów
+                        showInfoMessage(gui, "Błąd", "Nie udało się pobrać produktów.");
+                    }
+                    break;
 
-        List<String> productIds = new ArrayList<>();
-        String productId;
-        while (true) {
-            productId = JOptionPane.showInputDialog("Podaj ID produktu (lub 'x' aby zakończyć):");
-            if ("x".equalsIgnoreCase(productId)) {
-                break;
+                case "5. Pobierz wszystkich użytkowników (administrator)":
+                    String usersJson = sendGetRequest("/admin/get-all-users", token);  // Pobranie danych użytkowników z serwera
+                    if (usersJson != null) {
+                        try {
+                            // Debugowanie: Wypisanie odpowiedzi JSON w terminalu
+                            System.out.println("Odpowiedź JSON w Lanternie: " + usersJson);
+
+                            // Parsowanie odpowiedzi jako obiekt JSON
+                            JSONObject jsonObject = new JSONObject(usersJson);
+
+                            // Sprawdzamy, czy istnieje pole "ourUsersList" w odpowiedzi
+                            if (jsonObject.has("ourUsersList")) {
+                                JSONArray users = jsonObject.getJSONArray("ourUsersList");
+
+                                StringBuilder usersList = new StringBuilder("Użytkownicy:\n");
+
+                                // Iterowanie po użytkownikach i formatowanie tekstu
+                                for (int i = 0; i < users.length(); i++) {
+                                    JSONObject user = users.getJSONObject(i);
+                                    int id = user.getInt("id");
+                                    String name = user.getString("name");
+                                    String email = user.getString("email");
+                                    String city = user.getString("city");  // Miasto
+
+                                    // Dodawanie danych do wyświetlania
+                                    usersList.append(String.format("id: %d - nazwa: %s - email: %s - miasto: %s\n", id, name, email, city));
+                                }
+
+                                // Wyświetlanie użytkowników w oknie Lanterny
+                                showInfoMessage(gui, "Użytkownicy", usersList.toString());
+                            } else {
+                                // Obsługa sytuacji, gdy nie ma użytkowników w odpowiedzi
+                                showInfoMessage(gui, "Błąd", "Brak danych użytkowników w odpowiedzi.");
+                            }
+                        } catch (JSONException e) {
+                            // Obsługa sytuacji, gdy nie udało się sparsować odpowiedzi
+                            showInfoMessage(gui, "Błąd", "Błąd podczas parsowania odpowiedzi JSON.");
+                        }
+                    } else {
+                        // Obsługa sytuacji, gdy nie udało się pobrać użytkowników
+                        showInfoMessage(gui, "Błąd", "Nie udało się pobrać użytkowników.");
+                    }
+                    break;
+
+                case "6. Pobierz użytkownika po ID (administrator)":
+                    // Okno do wprowadzenia ID użytkownika
+                    Window getUserByIdWindow = new BasicWindow("Pobierz użytkownika po ID");
+
+                    Panel getUserPanel = new Panel();
+                    getUserPanel.setLayoutManager(new GridLayout(2));
+
+                    TextBox userIdBox = new TextBox();  // Pole tekstowe do wprowadzenia ID użytkownika
+
+                    getUserPanel.addComponent(new Label("Podaj ID użytkownika:"));
+                    getUserPanel.addComponent(userIdBox);
+
+                    Button confirmButton = new Button("Pobierz", () -> {
+                        String userId = userIdBox.getText();  // Pobranie ID użytkownika z pola tekstowego
+
+                        // Wysyłanie żądania GET na endpoint z ID użytkownika
+                        String userJson = sendGetRequest("/admin/get-user-by-id/" + userId, token);
+
+                        if (userJson != null) {
+                            try {
+                                // Debugowanie: Wypisanie odpowiedzi JSON w terminalu
+                                System.out.println("Odpowiedź JSON w Lanternie: " + userJson);
+
+                                // Parsowanie odpowiedzi jako obiekt JSON
+                                JSONObject jsonObject = new JSONObject(userJson);
+
+                                // Sprawdzamy, czy odpowiedź zawiera dane użytkownika
+                                if (jsonObject.has("user")) {
+                                    JSONObject user = jsonObject.getJSONObject("user");
+                                    int id = user.getInt("id");
+                                    String name = user.getString("name");
+                                    String email = user.getString("email");
+                                    String city = user.getString("city");  // Miasto
+
+                                    // Wyświetlanie użytkownika w oknie Lanterny
+                                    StringBuilder userInfo = new StringBuilder(String.format("ID: %d\nNazwa: %s\nEmail: %s\nMiasto: %s", id, name, email, city));
+                                    showInfoMessage(gui, "Użytkownik", userInfo.toString());
+                                } else {
+                                    showInfoMessage(gui, "Błąd", "Nie znaleziono użytkownika o podanym ID.");
+                                }
+                            } catch (JSONException e) {
+                                // Obsługa błędu parsowania odpowiedzi JSON
+                                showInfoMessage(gui, "Błąd", "Błąd podczas parsowania odpowiedzi JSON.");
+                            }
+                        } else {
+                            // Obsługa sytuacji, gdy nie udało się pobrać użytkownika
+                            showInfoMessage(gui, "Błąd", "Nie udało się pobrać użytkownika.");
+                        }
+                        getUserByIdWindow.close();  // Zamknięcie okna po pobraniu użytkownika
+                    });
+
+                    Button cancelButton = new Button("Anuluj", getUserByIdWindow::close);
+
+                    getUserPanel.addComponent(confirmButton);
+                    getUserPanel.addComponent(cancelButton);
+
+                    getUserByIdWindow.setComponent(getUserPanel);
+                    gui.addWindowAndWait(getUserByIdWindow);  // Oczekiwanie na akcję użytkownika
+                    break;
+
+
+
+
+                case "7. Zaktualizuj użytkownika (administrator)":
+                    showInfoMessage(gui, "Zaktualizuj użytkownika", "Podaj dane do aktualizacji.");
+                    openUpdateUserWindow(gui, token);
+                    break;
+
+                case "8. Usuń użytkownika (administrator)":
+                    showInfoMessage(gui, "Usuń użytkownika", "Podaj ID użytkownika do usunięcia.");
+                    break;
+
+                case "9. Usuń produkt (administrator)":
+                    showInfoMessage(gui, "Usuń produkt", "Podaj ID produktu do usunięcia.");
+                    break;
+
+                case "10. Dodaj zamówienie (użytkownik)":
+                    showInfoMessage(gui, "Dodaj zamówienie", "Logika dodawania zamówienia.");
+                    break;
+
+                case "11. Usuń zamówienie (administrator)":
+                    showInfoMessage(gui, "Usuń zamówienie", "Podaj ID zamówienia do usunięcia.");
+                    break;
+
+                case "0. Wyjdź":
+                    System.exit(0);
+
+                default:
+                    showInfoMessage(gui, "Błąd", "Nieprawidłowy wybór. Spróbuj ponownie.");
             }
-            productIds.add(productId);
+        } catch (Exception e) {
+            showInfoMessage(gui, "Błąd", e.getMessage());
         }
-
-        String jsonInput = "{\"products_id_list\": " + new JSONArray(productIds) + "}";
-        sendPostRequest("/adminuser/add_order", jsonInput, token);
     }
 
-    private void deleteOrder(ActionEvent e) {
-        if (token == null) {
-            JOptionPane.showMessageDialog(null, "Zaloguj się jako administrator!");
-            return;
-        }
+    private static void openRegisterWindow(MultiWindowTextGUI gui) {
+        Window registerWindow = new BasicWindow("Rejestracja użytkownika");
 
-        String orderId = JOptionPane.showInputDialog("Podaj ID zamówienia do usunięcia:");
-        sendDeleteRequest("/admin/delete_order/" + orderId, token);
+        Panel registerPanel = new Panel();
+        registerPanel.setLayoutManager(new GridLayout(2));
+
+        TextBox emailBox = new TextBox();
+        TextBox nameBox = new TextBox();
+        TextBox passwordBox = new TextBox().setMask('*');
+        TextBox cityBox = new TextBox();
+        TextBox roleBox = new TextBox();
+
+        registerPanel.addComponent(new Label("Email:"));
+        registerPanel.addComponent(emailBox);
+        registerPanel.addComponent(new Label("Nazwa:"));
+        registerPanel.addComponent(nameBox);
+        registerPanel.addComponent(new Label("Hasło:"));
+        registerPanel.addComponent(passwordBox);
+        registerPanel.addComponent(new Label("Miasto:"));
+        registerPanel.addComponent(cityBox);
+        registerPanel.addComponent(new Label("Rola:"));
+        registerPanel.addComponent(roleBox);
+
+        Button confirmButton = new Button("Zarejestruj", () -> {
+            String email = emailBox.getText();
+            String name = nameBox.getText();
+            String password = passwordBox.getText();
+            String city = cityBox.getText();
+            String role = roleBox.getText();
+
+            String registerJsonInput = String.format(
+                    "{\"email\": \"%s\",\"name\": \"%s\", \"password\": \"%s\", \"city\": \"%s\", \"role\": \"%s\"}",
+                    email, name, password, city, role);
+
+            sendPostRequest("/auth/register", registerJsonInput, null);
+            registerWindow.close();
+        });
+
+        Button cancelButton = new Button("Anuluj", registerWindow::close);
+
+        registerPanel.addComponent(confirmButton);
+        registerPanel.addComponent(cancelButton);
+
+        registerWindow.setComponent(registerPanel);
+        gui.addWindowAndWait(registerWindow);
     }
 
-    private static void sendGetRequest(String endpoint, String token) {
+    private static String token = null;  // Zmienna przechowująca token
+
+    private static void openLoginWindow(MultiWindowTextGUI gui) {
+        Window loginWindow = new BasicWindow("Logowanie");
+
+        Panel loginPanel = new Panel();
+        loginPanel.setLayoutManager(new GridLayout(2));
+
+        TextBox emailBox = new TextBox();
+        TextBox passwordBox = new TextBox().setMask('*');
+
+        loginPanel.addComponent(new Label("Email:"));
+        loginPanel.addComponent(emailBox);
+        loginPanel.addComponent(new Label("Hasło:"));
+        loginPanel.addComponent(passwordBox);
+
+        Button confirmButton = new Button("Zaloguj", () -> {
+            String email = emailBox.getText();
+            String password = passwordBox.getText();
+
+            String loginJsonInput = String.format("{\"email\": \"%s\", \"password\": \"%s\"}", email, password);
+            String json = sendPostRequest("/auth/login", loginJsonInput, null);
+
+            if (json != null) {
+                JSONObject jsonObject = new JSONObject(json);
+                token = jsonObject.getString("token");  // Przechowujemy token
+                showInfoMessage(gui, "Logowanie", "Zalogowano pomyślnie. Token: " + token);
+            }
+            loginWindow.close();
+        });
+
+        Button cancelButton = new Button("Anuluj", loginWindow::close);
+
+        loginPanel.addComponent(confirmButton);
+        loginPanel.addComponent(cancelButton);
+
+        loginWindow.setComponent(loginPanel);
+        gui.addWindowAndWait(loginWindow);
+    }
+
+    private static void openAddProductWindow(MultiWindowTextGUI gui, String token) {
+        Window addProductWindow = new BasicWindow("Dodaj produkt");
+
+        Panel productPanel = new Panel();
+        productPanel.setLayoutManager(new GridLayout(2));
+
+        TextBox productNameBox = new TextBox();
+        TextBox categoryBox = new TextBox();
+        TextBox priceBox = new TextBox();
+
+        productPanel.addComponent(new Label("Nazwa produktu:"));
+        productPanel.addComponent(productNameBox);
+        productPanel.addComponent(new Label("Kategoria:"));
+        productPanel.addComponent(categoryBox);
+        productPanel.addComponent(new Label("Cena:"));
+        productPanel.addComponent(priceBox);
+
+        Button confirmButton = new Button("Dodaj", () -> {
+            String productName = productNameBox.getText();
+            String category = categoryBox.getText();
+            String price = priceBox.getText();
+
+            // Formatowanie danych do JSON
+            String productJsonInput = String.format("{\"name\": \"%s\", \"category\": \"%s\", \"price\": \"%s\"}", productName, category, price);
+
+            // Wysyłanie żądania POST
+            String addProductResponse = sendPostRequest("/admin/add-product", productJsonInput, token);
+
+            if (addProductResponse != null) {
+                showInfoMessage(gui, "Dodano produkt", "Odpowiedź z serwera: " + addProductResponse);
+            } else {
+                showInfoMessage(gui, "Błąd", "Nie udało się dodać produktu.");
+            }
+            addProductWindow.close();
+        });
+
+        Button cancelButton = new Button("Anuluj", addProductWindow::close);
+
+        productPanel.addComponent(confirmButton);
+        productPanel.addComponent(cancelButton);
+
+        addProductWindow.setComponent(productPanel);
+        gui.addWindowAndWait(addProductWindow);
+    }
+
+
+
+
+
+    private static void showInfoMessage(MultiWindowTextGUI gui, String title, String message) {
+        Window infoWindow = new BasicWindow(title);
+
+        Panel infoPanel = new Panel();
+        infoPanel.addComponent(new Label(message));
+        infoPanel.addComponent(new Button("OK", infoWindow::close));
+
+        infoWindow.setComponent(infoPanel);
+        gui.addWindowAndWait(infoWindow);
+    }
+
+    private static String sendGetRequest(String endpoint, String token) {
         HttpURLConnection conn = null;
         try {
             URL url = new URL(BASE_URL + endpoint);
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");
-            if (token != null && !token.isEmpty()) {
+
+            if (token != null) {
                 conn.setRequestProperty("Authorization", "Bearer " + token);
             }
 
@@ -587,24 +421,19 @@ public class Main {
                 try (InputStream responseStream = conn.getInputStream();
                      BufferedReader reader = new BufferedReader(new InputStreamReader(responseStream))) {
 
-                    // Pobranie i połączenie odpowiedzi w jeden ciąg
                     String response = reader.lines().collect(Collectors.joining("\n"));
+                    // Wypiszmy odpowiedź w konsoli Lanterny
+                    System.out.println("Odpowiedź serwera w Lanternie: " + response);  // Debugowanie
 
-                    // Formatowanie JSON, aby wypisać z wcięciem
-                    if (response.startsWith("[")) {
-                        JSONArray jsonArray = new JSONArray(response);
-                        System.out.println(jsonArray.toString(4)); // 4 oznacza poziom wcięcia
-                    } else {
-                        JSONObject jsonObject = new JSONObject(response);
-                        System.out.println(jsonObject.toString(4)); // 4 oznacza poziom wcięcia
-                    }
+                    return response;
                 }
             } else {
                 System.out.println("Error in GET request: " + responseCode);
+                return null;
             }
-
         } catch (IOException e) {
             System.out.println("Błąd podczas wysyłania GET: " + e.getMessage());
+            return null;
         } finally {
             if (conn != null) {
                 conn.disconnect();
@@ -613,9 +442,8 @@ public class Main {
     }
 
 
-    private static String sendPostRequest(String endpoint, String data, String token) {
 
-        System.out.println(token);
+    private static String sendPostRequest(String endpoint, String data, String token) {
         HttpURLConnection conn = null;
         try {
             URL url = new URL(BASE_URL + endpoint);
@@ -623,11 +451,10 @@ public class Main {
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
-            if (token != null && !token.isEmpty()) {
+            if (token != null) {
                 conn.setRequestProperty("Authorization", "Bearer " + token);
             }
 
-            // Wysłanie danych JSON
             try (var os = conn.getOutputStream()) {
                 byte[] input = data.getBytes("utf-8");
                 os.write(input, 0, input.length);
@@ -636,20 +463,12 @@ public class Main {
             int responseCode = conn.getResponseCode();
             System.out.println("POST request response code: " + responseCode);
 
-            // Odczyt odpowiedzi serwera
-            StringBuilder responseBuilder = new StringBuilder();
-            try (InputStream responseStream = conn.getInputStream();
-                 BufferedReader reader = new BufferedReader(new InputStreamReader(responseStream))) {
-                String responseLine;
-                while ((responseLine = reader.readLine()) != null) {
-                    responseBuilder.append(responseLine);
-                }
-            }
-            String response = responseBuilder.toString();
             if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
-                return response;
-            } else {
-                System.out.println("Error in POST request: " + responseCode + ", response: " + response);
+                try (InputStream responseStream = conn.getInputStream();
+                     BufferedReader reader = new BufferedReader(new InputStreamReader(responseStream))) {
+
+                    return reader.lines().collect(Collectors.joining("\n"));
+                }
             }
         } catch (IOException e) {
             System.out.println("Błąd podczas wysyłania POST: " + e.getMessage());
@@ -661,29 +480,91 @@ public class Main {
         return null;
     }
 
+    private static void openUpdateUserWindow(MultiWindowTextGUI gui, String token) {
+        Window updateWindow = new BasicWindow("Aktualizuj użytkownika");
+
+        Panel updatePanel = new Panel();
+        updatePanel.setLayoutManager(new GridLayout(2));
+
+        // Pola do wprowadzenia danych
+        TextBox userIdBox = new TextBox();
+        TextBox emailBox = new TextBox();
+        TextBox nameBox = new TextBox();
+        TextBox passwordBox = new TextBox().setMask('*');
+        TextBox cityBox = new TextBox();
+        TextBox roleBox = new TextBox();
+
+        // Dodanie komponentów do formularza
+        updatePanel.addComponent(new Label("ID użytkownika:"));
+        updatePanel.addComponent(userIdBox);
+        updatePanel.addComponent(new Label("Email:"));
+        updatePanel.addComponent(emailBox);
+        updatePanel.addComponent(new Label("Nazwa:"));
+        updatePanel.addComponent(nameBox);
+        updatePanel.addComponent(new Label("Hasło:"));
+        updatePanel.addComponent(passwordBox);
+        updatePanel.addComponent(new Label("Miasto:"));
+        updatePanel.addComponent(cityBox);
+        updatePanel.addComponent(new Label("Rola:"));
+        updatePanel.addComponent(roleBox);
+
+        Button confirmButton = new Button("Zaktualizuj", () -> {
+            String userId = userIdBox.getText();
+            String email = emailBox.getText();
+            String name = nameBox.getText();
+            String password = passwordBox.getText();
+            String city = cityBox.getText();
+            String role = roleBox.getText();
+
+            String updateJsonInput = String.format(
+                    "{\"email\": \"%s\",\"name\": \"%s\", \"password\": \"%s\", \"city\": \"%s\", \"role\": \"%s\"}",
+                    email, name, password, city, role);
+
+            // Wywołanie metody PUT
+            sendPutRequest("/users/" + userId, updateJsonInput, token);
+            updateWindow.close();
+        });
+
+        Button cancelButton = new Button("Anuluj", updateWindow::close);
+
+        updatePanel.addComponent(confirmButton);
+        updatePanel.addComponent(cancelButton);
+
+        updateWindow.setComponent(updatePanel);
+        gui.addWindowAndWait(updateWindow);
+    }
+
     private static void sendPutRequest(String endpoint, String data, String token) {
         HttpURLConnection conn = null;
         try {
+            // Tworzymy URL z endpointem
             URL url = new URL(BASE_URL + endpoint);
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("PUT");
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
+
+            // Jeśli token nie jest pusty, dodajemy go do nagłówka Authorization
             if (token != null && !token.isEmpty()) {
+                System.out.println("Dodano nagłówek Authorization z tokenem.");
                 conn.setRequestProperty("Authorization", "Bearer " + token);
+            } else {
+                System.out.println("Brak tokena autoryzacji.");
             }
 
+            // Wysyłamy dane w ciele żądania
             try (var os = conn.getOutputStream()) {
                 byte[] input = data.getBytes("utf-8");
                 os.write(input, 0, input.length);
             }
 
+            // Pobieramy kod odpowiedzi
             int responseCode = conn.getResponseCode();
-            System.out.println("PUT request response code: " + responseCode);
+            System.out.println("HTTP Response Code: " + responseCode);
 
-            // Odczyt odpowiedzi
+            // Odczyt odpowiedzi z serwera
             StringBuilder responseBuilder = new StringBuilder();
-            try (InputStream responseStream = conn.getInputStream();
+            try (InputStream responseStream = (responseCode >= 400) ? conn.getErrorStream() : conn.getInputStream();
                  BufferedReader reader = new BufferedReader(new InputStreamReader(responseStream))) {
                 String responseLine;
                 while ((responseLine = reader.readLine()) != null) {
@@ -691,13 +572,18 @@ public class Main {
                 }
             }
             String response = responseBuilder.toString();
-            System.out.println("Odpowiedź z PUT: " + response);
+            System.out.println("Response: " + response);
 
-            if (responseCode != HttpURLConnection.HTTP_OK && responseCode != HttpURLConnection.HTTP_CREATED) {
-                System.out.println("Błąd w PUT: " + responseCode + ", odpowiedź: " + response);
+            // Sprawdzamy kod odpowiedzi i logujemy
+            if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
+                System.out.println("Aktualizacja zakończona sukcesem.");
+            } else {
+                System.out.println("Błąd przy próbie aktualizacji: " + responseCode);
+                System.out.println("Szczegóły błędu: " + response);
             }
         } catch (IOException e) {
             System.out.println("Błąd podczas wysyłania PUT: " + e.getMessage());
+            e.printStackTrace();
         } finally {
             if (conn != null) {
                 conn.disconnect();
@@ -725,5 +611,5 @@ public class Main {
             }
         }
     }
-}
 
+}
