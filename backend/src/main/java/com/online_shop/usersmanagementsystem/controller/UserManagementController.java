@@ -12,6 +12,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 public class UserManagementController {
     @Autowired
@@ -27,9 +30,15 @@ public class UserManagementController {
         return ResponseEntity.ok(usersManagementService.add_product(productDto));
     }
 
-    @GetMapping("/admin/get-all-products")
+    @GetMapping("/public/get-all-products")
     public ResponseEntity<ProductDto> get_all_product(){
         return ResponseEntity.ok(usersManagementService.get_all_products());
+
+    }
+
+    @GetMapping("/public/get-product-by-Id/{productId}")
+    public ResponseEntity<ProductDto> get_product_by_id(@PathVariable Integer productId){
+        return ResponseEntity.ok(usersManagementService.get_product_by_id(productId));
 
     }
 
@@ -90,6 +99,35 @@ public class UserManagementController {
     public ResponseEntity<OrderDto> delete_order(@PathVariable Integer orderId){
         return ResponseEntity.ok(usersManagementService.delete_order(orderId));
     }
+
+
+
+
+    //zwraca jsona ze szczegółami danego zamówienia
+    @GetMapping("/public/order-products/{orderId}")
+    public ResponseEntity<ProductDto> getProductsByOrderId(@PathVariable Integer orderId) {
+        return ResponseEntity.ok(usersManagementService.getProductsByOrderId(orderId));
+    }
+
+
+
+    //poniżej są 2 getmapppingi które zwracają to samo
+    //zwraca jsona z id zamówień danego użytkownika (rozpoznaje go na podstawie id w urlu)
+    @GetMapping("/public/orders/{userId}")
+    public ResponseEntity<OrderDto> getOrdersByUserId(@PathVariable Integer userId) {
+        return ResponseEntity.ok(usersManagementService.getOrdersByUserId(userId));
+    }
+
+    //zwraca jsona z id zamówień danego użytkownika (rozpoznaje go na podstawie tokena)
+    @GetMapping("/adminuser/orders")
+    public ResponseEntity<OrderDto> getOrdersByUserId2() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        int userId=usersManagementService.getIdByEmail(email);
+        return ResponseEntity.ok(usersManagementService.getOrdersByUserId(userId));
+    }
+
+
 
 
 

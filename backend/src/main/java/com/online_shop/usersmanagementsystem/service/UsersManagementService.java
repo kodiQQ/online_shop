@@ -83,6 +83,20 @@ public class UsersManagementService {
         }
     }
 
+    public ProductDto get_product_by_id(int id) {
+        ProductDto reqRes = new ProductDto();
+
+        try {
+            Products result = productsRepo.findById(id);
+            reqRes.setProducts(result);
+            return reqRes;
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+            return reqRes;
+        }
+    }
+
 
     public ReqRes login(ReqRes loginRequest) {
         ReqRes response = new ReqRes();
@@ -337,6 +351,71 @@ public class UsersManagementService {
 
 
     }
+
+
+    public OrderDto getOrdersByUserId(Integer userId) {
+        OrderDto response = new OrderDto();
+
+        try {
+            // Pobieramy listę zamówień użytkownika
+            List<Integer> orderIds = ordersRepo.findAll().stream()
+                    .filter(order -> order.getOurUser().getId().equals(userId))
+                    .map(Orders::getId)
+                    .toList();
+
+            System.out.println(orderIds);
+
+            if (!orderIds.isEmpty()) {
+                // Dodajemy listę zamówień do odpowiedzi
+                response.setProducts_id_list(orderIds); // Tutaj można dodać specjalną listę DTO dla zamówień, jeśli potrzeba
+                response.setMessage("Orders fetched successfully");
+                response.setStatusCode(200);
+            } else {
+                response.setMessage("No orders found for user ID: " + userId);
+                response.setStatusCode(404);
+            }
+        } catch (Exception e) {
+            response.setStatusCode(500);
+            response.setError("Error occurred: " + e.getMessage());
+        }
+
+        return response;
+    }
+
+
+
+
+    public ProductDto getProductsByOrderId(Integer orderId) {
+        ProductDto response = new ProductDto();
+
+        try {
+            Optional<Orders> orderOptional = ordersRepo.findById(orderId);
+            if (orderOptional.isPresent()) {
+                List<Products> products = orderOptional.get().getProducts();
+                response.setProductsList(products);
+                response.setMessage("Products fetched successfully for order ID: " + orderId);
+                response.setStatusCode(200);
+            } else {
+                response.setMessage("Order not found for ID: " + orderId);
+                response.setStatusCode(404);
+            }
+        } catch (Exception e) {
+            response.setStatusCode(500);
+            response.setError("Error occurred: " + e.getMessage());
+        }
+
+        return response;
+    }
+
+    public int getIdByEmail(String email) {
+        var user = usersRepo.findByEmail(email);
+        if (user.isPresent()) {
+            return user.get().getId();
+        }
+        return 0;
+    }
+
+
 
 
 }
