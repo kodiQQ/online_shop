@@ -14,12 +14,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class Main {
     private static final String BASE_URL = "http://localhost:8080";
 
-
+    private static ArrayList<Integer> basket = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
         Screen screen = new DefaultTerminalFactory().createScreen();
@@ -38,7 +39,7 @@ public class Main {
                 "1. Zarejestruj użytkownika",
                 "2. Zaloguj się",
                 "3. Dodaj produkt (administrator)",
-                "4. Pobierz wszystkie produkty (administrator)",
+                "4. Pobierz wszystkie produkty",
                 "5. Pobierz wszystkich użytkowników (administrator)",
                 "6. Pobierz użytkownika po ID (administrator)",
                 "7. Zaktualizuj użytkownika (administrator)",
@@ -46,6 +47,8 @@ public class Main {
                 "9. Usuń produkt (administrator)",
                 "10. Dodaj zamówienie (użytkownik)",
                 "11. Usuń zamówienie (administrator)",
+                "12. Dodaj do koszyka",
+                "13. Pokaż zawartość koszyka",
                 "0. Wyjdź"
         };
 
@@ -73,8 +76,8 @@ public class Main {
                     openAddProductWindow(gui, token);
                     break;
 
-                case "4. Pobierz wszystkie produkty (administrator)":
-                    String productsJson = sendGetRequest("/admin/get-all-products", token);  // Pobranie danych z serwera
+                case "4. Pobierz wszystkie produkty":
+                    String productsJson = sendGetRequest("/public/get-all-products", token);  // Pobranie danych z serwera
                     if (productsJson != null) {
                         try {
                             // Debugowanie: Wypisanie odpowiedzi JSON
@@ -176,7 +179,11 @@ public class Main {
                         String userId = userIdBox.getText();  // Pobranie ID użytkownika z pola tekstowego
 
                         // Wysyłanie żądania GET na endpoint z ID użytkownika
-                        String userJson = sendGetRequest("/admin/get-user-by-id/" + userId, token);
+                        System.out.println("USERID: "+userId);
+                        String url="/admin/get-users/"+userId;
+                        System.out.println("URL: "+url);
+                        System.out.println(token);
+                        String userJson = sendGetRequest( url, token);
 
                         if (userJson != null) {
                             try {
@@ -185,10 +192,11 @@ public class Main {
 
                                 // Parsowanie odpowiedzi jako obiekt JSON
                                 JSONObject jsonObject = new JSONObject(userJson);
-
+                                System.out.println(jsonObject);
                                 // Sprawdzamy, czy odpowiedź zawiera dane użytkownika
-                                if (jsonObject.has("user")) {
-                                    JSONObject user = jsonObject.getJSONObject("user");
+                                if (jsonObject.has("ourUsers")) {
+                                    JSONObject user = jsonObject.getJSONObject("ourUsers");
+                                    System.out.println(user);
                                     int id = user.getInt("id");
                                     String name = user.getString("name");
                                     String email = user.getString("email");
@@ -230,18 +238,30 @@ public class Main {
 
                 case "8. Usuń użytkownika (administrator)":
                     showInfoMessage(gui, "Usuń użytkownika", "Podaj ID użytkownika do usunięcia.");
+                    openDeleteUserWindow(gui,token);
                     break;
 
                 case "9. Usuń produkt (administrator)":
                     showInfoMessage(gui, "Usuń produkt", "Podaj ID produktu do usunięcia.");
+                    openDeleteProductWindow(gui,token);
                     break;
 
                 case "10. Dodaj zamówienie (użytkownik)":
-                    showInfoMessage(gui, "Dodaj zamówienie", "Logika dodawania zamówienia.");
+                    openShowBasket(gui);
+                    openAddOrderWindow(gui, token);
+//                    showInfoMessage(gui, "Dodaj zamówienie", "Logika dodawania zamówienia.");
                     break;
 
                 case "11. Usuń zamówienie (administrator)":
                     showInfoMessage(gui, "Usuń zamówienie", "Podaj ID zamówienia do usunięcia.");
+                    break;
+
+                case "12. Dodaj do koszyka":
+                    openAddProductToBasketWindow(gui,token);
+                    break;
+
+                case "13. Pokaż zawartość koszyka":
+                    openShowBasket(gui);
                     break;
 
                 case "0. Wyjdź":
@@ -253,6 +273,47 @@ public class Main {
         } catch (Exception e) {
             showInfoMessage(gui, "Błąd", e.getMessage());
         }
+    }
+
+    private static boolean checkIfStringIsNumber(String str) {
+        try {
+            int result = Integer.parseInt(str); // Zły format
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public static void openShowBasket(MultiWindowTextGUI gui){
+
+                    // Iterowanie po produktach i formatowanie tekstu
+        String allProducts="";
+                    for (int i = 0; i < basket.size(); i++) {
+                        String jsonString=sendGetItemRequest("/public/get-product-by-Id/"+basket.get(i));
+                        System.out.println(jsonString);
+                        JSONObject json = new JSONObject(jsonString);
+
+                        // Wyciągamy statusCode
+                        int statusCode = json.getInt("statusCode");
+
+                        // Wyciągamy obiekt "products"
+                        JSONObject products = json.getJSONObject("products");
+
+                        // Wyciągamy dane z obiektu "products"
+                        int id = products.getInt("id");
+                        String name = products.getString("name");
+                        String category = products.getString("category");
+                        String price = products.getString("price");
+
+                        allProducts=allProducts+id+","+name+","+category+","+price+"\n";
+
+
+
+                    }
+
+        showInfoMessage(gui, "Produkty:", allProducts);
+
+
     }
 
     private static void openRegisterWindow(MultiWindowTextGUI gui) {
@@ -324,10 +385,12 @@ public class Main {
 
             String loginJsonInput = String.format("{\"email\": \"%s\", \"password\": \"%s\"}", email, password);
             String json = sendPostRequest("/auth/login", loginJsonInput, null);
-
+//            System.out.println(json);
             if (json != null) {
                 JSONObject jsonObject = new JSONObject(json);
+
                 token = jsonObject.getString("token");  // Przechowujemy token
+                System.out.println(token);
                 showInfoMessage(gui, "Logowanie", "Zalogowano pomyślnie. Token: " + token);
             }
             loginWindow.close();
@@ -388,6 +451,95 @@ public class Main {
     }
 
 
+    private static void openAddProductToBasketWindow(MultiWindowTextGUI gui, String token) {
+        Window addProductWindow = new BasicWindow("Dodaj produkt do koszyka");
+
+        Panel productPanel = new Panel();
+        productPanel.setLayoutManager(new GridLayout(2));
+
+        TextBox productIdBox = new TextBox();
+        TextBox quantityBox = new TextBox();
+
+        productPanel.addComponent(new Label("Id Produktu:"));
+        productPanel.addComponent(productIdBox);
+        productPanel.addComponent(new Label("Liczba:"));
+        productPanel.addComponent(quantityBox);
+
+
+
+        Button confirmButton = new Button("Dodaj", () -> {
+            String productId = productIdBox.getText();
+            String quantity = quantityBox.getText();
+            System.out.println(productId);
+            System.out.println(quantity);
+            System.out.println(checkIfStringIsNumber(productId));
+            System.out.println(checkIfStringIsNumber(quantity));
+            if(!checkIfStringIsNumber(productId)||!checkIfStringIsNumber(quantity)) {
+                showInfoMessage(gui, "Błąd!", "Nie wpisałeś liczb");
+            }else{
+                for(int i=0;i<Integer.parseInt(quantity);i++) {
+                    basket.add(Integer.parseInt(productId));
+                }
+                showInfoMessage(gui, "Sukces!", "Dodano do koszyka");
+            }
+
+
+            addProductWindow.close();
+        });
+
+        Button cancelButton = new Button("Anuluj", addProductWindow::close);
+
+        productPanel.addComponent(confirmButton);
+        productPanel.addComponent(cancelButton);
+
+        addProductWindow.setComponent(productPanel);
+        gui.addWindowAndWait(addProductWindow);
+    }
+
+
+    private static void openAddOrderWindow(MultiWindowTextGUI gui, String token) {
+        Window addProductWindow = new BasicWindow("Złóż zamówienie");
+
+        Panel productPanel = new Panel();
+        productPanel.setLayoutManager(new GridLayout(2));
+
+
+        Button confirmButton = new Button("Dodaj", () -> {
+
+            String newJson="{\n" +
+                    "  \"products_id_list\": [";
+
+            for(int i=0;i<basket.size();i++) {
+                newJson=newJson+basket.get(i)+",";
+            }
+            //usuniecie ostatniego przecinka:
+            newJson=newJson.substring(0, newJson.length()-1);
+            newJson=newJson+"]\n}";
+            System.out.println(newJson);
+
+
+
+            // Wysyłanie żądania POST
+            String addProductResponse = sendPostRequest("/adminuser/add_order", newJson, token);
+
+            if (addProductResponse != null) {
+                showInfoMessage(gui, "Dodano zamówienie", "Odpowiedź z serwera: " + addProductResponse);
+            } else {
+                showInfoMessage(gui, "Błąd", "Nie udało się dodać zamówienia.");
+            }
+            addProductWindow.close();
+        });
+
+        Button cancelButton = new Button("Anuluj", addProductWindow::close);
+
+        productPanel.addComponent(confirmButton);
+        productPanel.addComponent(cancelButton);
+
+        addProductWindow.setComponent(productPanel);
+        gui.addWindowAndWait(addProductWindow);
+    }
+
+
 
 
 
@@ -400,6 +552,42 @@ public class Main {
 
         infoWindow.setComponent(infoPanel);
         gui.addWindowAndWait(infoWindow);
+    }
+    private static String sendGetItemRequest(String endpoint) {
+        HttpURLConnection conn = null;
+        try {
+            URL url = new URL(BASE_URL + endpoint);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json");
+
+
+
+            int responseCode = conn.getResponseCode();
+            System.out.println("GET request response code: " + responseCode);
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                try (InputStream responseStream = conn.getInputStream();
+                     BufferedReader reader = new BufferedReader(new InputStreamReader(responseStream))) {
+
+                    String response = reader.lines().collect(Collectors.joining("\n"));
+                    // Wypiszmy odpowiedź w konsoli Lanterny
+                    System.out.println("Odpowiedź serwera w Lanternie: " + response);  // Debugowanie
+
+                    return response;
+                }
+            } else {
+                System.out.println("Error in GET request: " + responseCode);
+                return null;
+            }
+        } catch (IOException e) {
+            System.out.println("Błąd podczas wysyłania GET: " + e.getMessage());
+            return null;
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
     }
 
     private static String sendGetRequest(String endpoint, String token) {
@@ -532,6 +720,78 @@ public class Main {
 
         updateWindow.setComponent(updatePanel);
         gui.addWindowAndWait(updateWindow);
+    }
+
+
+    private static void openDeleteUserWindow(MultiWindowTextGUI gui, String token) {
+        Window deleteWindow = new BasicWindow("Usuń użytkownika");
+
+        Panel deletePanel = new Panel();
+        deletePanel.setLayoutManager(new GridLayout(2));
+
+        // Pola do wprowadzenia danych
+        TextBox userIdBox = new TextBox();
+
+
+        // Dodanie komponentów do formularza
+        deletePanel.addComponent(new Label("ID użytkownika:"));
+        deletePanel.addComponent(userIdBox);
+
+
+        Button confirmButton = new Button("Usuń", () -> {
+            String userId = userIdBox.getText();
+
+
+
+
+            // Wywołanie metody PUT
+            sendDeleteRequest("/admin/delete-user/" + userId,token);
+            deleteWindow.close();
+        });
+
+        Button cancelButton = new Button("Anuluj", deleteWindow::close);
+
+        deletePanel.addComponent(confirmButton);
+        deletePanel.addComponent(cancelButton);
+
+        deleteWindow.setComponent(deletePanel);
+        gui.addWindowAndWait(deleteWindow);
+    }
+
+
+    private static void openDeleteProductWindow(MultiWindowTextGUI gui, String token) {
+        Window deleteWindow = new BasicWindow("Usuń użytkownika");
+
+        Panel deletePanel = new Panel();
+        deletePanel.setLayoutManager(new GridLayout(2));
+
+        // Pola do wprowadzenia danych
+        TextBox userIdBox = new TextBox();
+
+
+        // Dodanie komponentów do formularza
+        deletePanel.addComponent(new Label("ID produktu:"));
+        deletePanel.addComponent(userIdBox);
+
+
+        Button confirmButton = new Button("Usuń", () -> {
+            String userId = userIdBox.getText();
+
+
+
+
+            // Wywołanie metody PUT
+            sendDeleteRequest("/admin/delete-product/" + userId,token);
+            deleteWindow.close();
+        });
+
+        Button cancelButton = new Button("Anuluj", deleteWindow::close);
+
+        deletePanel.addComponent(confirmButton);
+        deletePanel.addComponent(cancelButton);
+
+        deleteWindow.setComponent(deletePanel);
+        gui.addWindowAndWait(deleteWindow);
     }
 
     private static void sendPutRequest(String endpoint, String data, String token) {
