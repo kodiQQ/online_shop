@@ -118,7 +118,7 @@ public class UserManagementController {
         return ResponseEntity.ok(usersManagementService.getOrdersByUserId(userId));
     }
 
-    //zwraca jsona z id zamówień danego użytkownika (rozpoznaje go na podstawie tokena)
+//    zwraca jsona z id zamówień danego użytkownika (rozpoznaje go na podstawie tokena)
     @GetMapping("/adminuser/orders")
     public ResponseEntity<OrderDto> getOrdersByUserId2() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -126,7 +126,6 @@ public class UserManagementController {
         int userId=usersManagementService.getIdByEmail(email);
         return ResponseEntity.ok(usersManagementService.getOrdersByUserId(userId));
     }
-
 
 
 
