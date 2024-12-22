@@ -43,7 +43,7 @@ function AddProduct() {
 
     return (
         <div className="addProduct-container">
-            <h1>Logowanie</h1>
+            <h1>Dodaj produkt</h1>
             <form onSubmit={handleSubmit} className="addProduct-form">
                 <div className="addProduct-form-group">
                     <input

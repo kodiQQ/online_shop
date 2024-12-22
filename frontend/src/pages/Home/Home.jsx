@@ -7,6 +7,7 @@ function Home() {
     const [products, setProducts] = useState([]);
     const [searchTerm, setSearchTerm] = useState(''); // Stan dla wyszukiwania
     const [basket, setBasket] = useState([]); // Stan dla koszyka
+    const [items_count, setItems_count] = useState(0);
 
     // Pobieranie produktów po załadowaniu komponentu
     useEffect(() => {
@@ -20,6 +21,7 @@ function Home() {
         try {
             const productList = await UserService.getAllProducts();
             setProducts(productList);
+            setItems_count(productList.length);
         } catch (error) {
             console.error('Error fetching products:', error);
         }
@@ -41,7 +43,7 @@ function Home() {
 
     return (
         <div className="home-container">
-            <h1>Strona główna</h1>
+            <h1>Ilość przedmiotów - {items_count}</h1>
 
             {/* Pasek wyszukiwania */}
             <input
@@ -53,15 +55,27 @@ function Home() {
             />
 
             {/* Lista produktów */}
+
             <div className="productsContainer">
-                {filteredProducts.map((product) => (
-                    <div className="product" key={product.id}>
-                        <p>{product.name}</p>
-                        <img className="productImg" src={product.imageUrl} alt={product.name} />
-                        <p>{product.price}</p>
-                        <button onClick={() => handleAddToBasket(product)}>Dodaj do koszyka</button>
-                    </div>
-                ))}
+                {filteredProducts.length === 0 ? (
+                    <p>Brak produktów</p>
+                ) : (
+                    filteredProducts.map((product) => (
+                        <div className="product-container" key={product.id}>
+                            <img className="product-img" src={product.imageUrl} alt={product.name}/>
+                            <div className="product-info">
+                                <p className="product-name">{product.name}</p>
+                            </div>
+                            <div className="product-actions">
+                                <p className="product-price">{product.price} zł</p>
+                                <button className="add-btn" onClick={() => handleAddToBasket(product)}>Dodaj do
+                                    koszyka
+                                </button>
+                            </div>
+                        </div>
+
+                    ))
+                )}
             </div>
         </div>
     );
