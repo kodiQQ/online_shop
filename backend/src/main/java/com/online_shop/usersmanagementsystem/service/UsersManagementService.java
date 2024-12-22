@@ -1,6 +1,7 @@
 package com.online_shop.usersmanagementsystem.service;
 
 import com.online_shop.usersmanagementsystem.dto.OrderDto;
+import com.online_shop.usersmanagementsystem.dto.ProductAndNumberDto;
 import com.online_shop.usersmanagementsystem.dto.ProductDto;
 import com.online_shop.usersmanagementsystem.dto.ReqRes;
 import com.online_shop.usersmanagementsystem.entity.OurUsersEntity;
@@ -21,7 +22,7 @@ public interface UsersManagementService{
     ProductDto add_product(String imagePath,ProductDto productDto);
     OrderDto add_order(String email, OrderDto reqres);
     OrderDto getOrdersByUserId(Integer userId);
-    ProductDto getProductsByOrderId(Integer orderId);
+    ProductAndNumberDto getProductsAndNumbersByOrderId(Integer orderId);
     int getIdByEmail(String email);
 
 }

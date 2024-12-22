@@ -18,11 +18,13 @@ public class OrdersEntity {
     private OurUsersEntity ourUser;
 
     // Relacja wiele zamówień do wielu produktów (Many-to-Many)
-    @ManyToMany
+
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
-            name = "order_products",
+            name = "order_ProductAndNumber",
             joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
+            inverseJoinColumns = @JoinColumn(name = "ProductAndNumber_id")
     )
-    private List<ProductsEntity> products;
+    private List<ProductAndNumberEntity> productsAndNumbers;
+
 }

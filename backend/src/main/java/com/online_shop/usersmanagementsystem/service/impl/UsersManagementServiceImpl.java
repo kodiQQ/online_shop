@@ -1,16 +1,21 @@
 package com.online_shop.usersmanagementsystem.service.impl;
 
+import com.online_shop.usersmanagementsystem.ProductsAndNumber;
 import com.online_shop.usersmanagementsystem.dto.OrderDto;
+import com.online_shop.usersmanagementsystem.dto.ProductAndNumberDto;
 import com.online_shop.usersmanagementsystem.dto.ProductDto;
 import com.online_shop.usersmanagementsystem.dto.ReqRes;
 import com.online_shop.usersmanagementsystem.entity.OrdersEntity;
 import com.online_shop.usersmanagementsystem.entity.OurUsersEntity;
+import com.online_shop.usersmanagementsystem.entity.ProductAndNumberEntity;
 import com.online_shop.usersmanagementsystem.entity.ProductsEntity;
 import com.online_shop.usersmanagementsystem.repository.OrdersRepo;
+import com.online_shop.usersmanagementsystem.repository.ProductAndNumberRepo;
 import com.online_shop.usersmanagementsystem.repository.ProductsRepo;
 import com.online_shop.usersmanagementsystem.repository.UsersRepo;
 import com.online_shop.usersmanagementsystem.service.FileStorageService;
 import com.online_shop.usersmanagementsystem.service.UsersManagementService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,6 +44,7 @@ public class UsersManagementServiceImpl implements UsersManagementService {
     private final AuthenticationManager authenticationManager;
 
     private final PasswordEncoder passwordEncoder;
+    private final ProductAndNumberRepo productAndNumberRepo;
 
     @Value("${BACKEND_URL}")
     private String BASE_URL;
@@ -94,8 +100,9 @@ public class UsersManagementServiceImpl implements UsersManagementService {
         ProductDto reqRes = new ProductDto();
 
         try {
-            ProductsEntity result = productsRepo.findById(id);
-            reqRes.setProductsEntity(result);
+            Optional<ProductsEntity> resultOptional = productsRepo.findById(id);
+
+            reqRes.setProductsEntity(resultOptional.get());
             return reqRes;
         } catch (Exception e) {
             reqRes.setStatusCode(500);
@@ -337,26 +344,40 @@ public class UsersManagementServiceImpl implements UsersManagementService {
     }
 
     @Override
-    public OrderDto add_order(String email, OrderDto reqres) {
+    public OrderDto add_order(String email, OrderDto orderDto) {
         OrderDto resp = new OrderDto();
 
         try {
             OrdersEntity order = new OrdersEntity();
-
+            System.out.println("11111111111111");
             Optional<OurUsersEntity> userOptional = usersRepo.findByEmail(email);
             OurUsersEntity user = userOptional.orElse(null);
             order.setOurUser(user);
-
-            List<Integer> Products_id_list = reqres.getProducts_id_list();
+            System.out.println("2222222222222");
+            List<ProductsAndNumber> productsAndNumbers = orderDto.getProductsAndNumbersList();
 //            List<Products> all_products_list=productsRepo.findById();
-            List<ProductsEntity> current_products_Entity_list = new ArrayList<ProductsEntity>();
-            for (int id : Products_id_list) {
-                current_products_Entity_list.add(productsRepo.findById(id));
+            System.out.println("33333333333333");
+            List<ProductAndNumberEntity> currentProductAndNumberEntityList = new ArrayList<ProductAndNumberEntity>();
+            for (ProductsAndNumber productsAndNumber : productsAndNumbers) {
+
+                Optional<ProductsEntity> productOptional = productsRepo.findById(productsAndNumber.getProductId());
+                if (productOptional.isEmpty()) {
+                    throw new EntityNotFoundException("Product with ID " + productsAndNumber.getProductId() + " not found");
+                }
+
+                ProductsEntity product = productOptional.get();
+                ProductAndNumberEntity productAndNumberEntity=ProductAndNumberEntity.builder()
+                        .product(product)
+                        .number(productsAndNumber.getProductNumber())
+                        .build();
+                currentProductAndNumberEntityList.add(productAndNumberEntity);
             }
+            System.out.println("4444444444444");
 
-            order.setProducts(current_products_Entity_list);
-
+            order.setProductsAndNumbers(currentProductAndNumberEntityList);
+            System.out.println("55555555555555");
             OrdersEntity orderResult = ordersRepo.save(order);
+            System.out.println("66666666666666");
             if (orderResult.getId() > 0) {
                 resp.setOrdersEntity(orderResult);
                 resp.setMessage("Order succesfully added");
@@ -374,7 +395,7 @@ public class UsersManagementServiceImpl implements UsersManagementService {
 
     @Override
     public OrderDto getOrdersByUserId(Integer userId) {
-        OrderDto response = new OrderDto();
+        OrderDto orderDto = new OrderDto();
 
         try {
             // Pobieramy listę zamówień użytkownika
@@ -387,44 +408,50 @@ public class UsersManagementServiceImpl implements UsersManagementService {
 
             if (!orderIds.isEmpty()) {
                 // Dodajemy listę zamówień do odpowiedzi
-                response.setProducts_id_list(orderIds); // Tutaj można dodać specjalną listę DTO dla zamówień, jeśli potrzeba
-                response.setMessage("Orders fetched successfully");
-                response.setStatusCode(200);
+//                orderDto.setProducts_id_list(orderIds);
+                List<OrdersEntity> ordersEntityList=new ArrayList<>();
+                for (int i = 0; i < orderIds.size(); i++) {
+                    OrdersEntity ordersEntity = ordersRepo.findById(orderIds.get(i)).get();
+                    ordersEntityList.add(ordersEntity);
+                }
+                orderDto.setOrdersEntityList(ordersEntityList);
+                orderDto.setMessage("Orders fetched successfully");
+                orderDto.setStatusCode(200);
             } else {
-                response.setMessage("No orders found for user ID: " + userId);
-                response.setStatusCode(404);
+                orderDto.setMessage("No orders found for user ID: " + userId);
+                orderDto.setStatusCode(404);
             }
         } catch (Exception e) {
-            response.setStatusCode(500);
-            response.setError("Error occurred: " + e.getMessage());
+            orderDto.setStatusCode(500);
+            orderDto.setError("Error occurred: " + e.getMessage());
         }
 
-        return response;
+        return orderDto;
     }
 
 
 
     @Override
-    public ProductDto getProductsByOrderId(Integer orderId) {
-        ProductDto response = new ProductDto();
+    public ProductAndNumberDto getProductsAndNumbersByOrderId(Integer orderId) {
+        ProductAndNumberDto productAndNumberDto = new ProductAndNumberDto();
 
         try {
             Optional<OrdersEntity> orderOptional = ordersRepo.findById(orderId);
             if (orderOptional.isPresent()) {
-                List<ProductsEntity> products = orderOptional.get().getProducts();
-                response.setProductsEntityList(products);
-                response.setMessage("Products fetched successfully for order ID: " + orderId);
-                response.setStatusCode(200);
+                List<ProductAndNumberEntity> productsAndNumbers = orderOptional.get().getProductsAndNumbers();
+                productAndNumberDto.setProductsAndNumbersList(productsAndNumbers);
+                productAndNumberDto.setMessage("Products fetched successfully for order ID: " + orderId);
+                productAndNumberDto.setStatusCode(200);
             } else {
-                response.setMessage("Order not found for ID: " + orderId);
-                response.setStatusCode(404);
+                productAndNumberDto.setMessage("Order not found for ID: " + orderId);
+                productAndNumberDto.setStatusCode(404);
             }
         } catch (Exception e) {
-            response.setStatusCode(500);
-            response.setError("Error occurred: " + e.getMessage());
+            productAndNumberDto.setStatusCode(500);
+            productAndNumberDto.setError("Error occurred: " + e.getMessage());
         }
 
-        return response;
+        return productAndNumberDto;
     }
     @Override
     public int getIdByEmail(String email) {

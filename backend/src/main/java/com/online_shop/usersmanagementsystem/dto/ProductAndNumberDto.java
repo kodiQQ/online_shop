@@ -5,22 +5,20 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.online_shop.usersmanagementsystem.ProductsAndNumber;
 import com.online_shop.usersmanagementsystem.entity.OrdersEntity;
 import com.online_shop.usersmanagementsystem.entity.OurUsersEntity;
+import com.online_shop.usersmanagementsystem.entity.ProductAndNumberEntity;
 import lombok.Data;
 
 import java.util.List;
-
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OrderDto {
+public class ProductAndNumberDto {
+
     private int statusCode;
     private String error;
     private String message;
-    private String token;
-    private String refreshToken;
-    private String expirationTime;
-    private OurUsersEntity user_id;
-    private List<ProductsAndNumber> productsAndNumbersList;
-    private OrdersEntity ordersEntity;
-    private List<OrdersEntity> ordersEntityList;
+    private List<ProductAndNumberEntity> productsAndNumbersList;
+    private ProductsAndNumber productsAndNumber;
+
+
 }

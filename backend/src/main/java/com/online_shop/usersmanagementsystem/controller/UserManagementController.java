@@ -1,6 +1,7 @@
 package com.online_shop.usersmanagementsystem.controller;
 
 import com.online_shop.usersmanagementsystem.dto.OrderDto;
+import com.online_shop.usersmanagementsystem.dto.ProductAndNumberDto;
 import com.online_shop.usersmanagementsystem.dto.ProductDto;
 import com.online_shop.usersmanagementsystem.dto.ReqRes;
 import com.online_shop.usersmanagementsystem.entity.OurUsersEntity;
@@ -107,7 +108,7 @@ public class UserManagementController {
         return ResponseEntity.ok(usersManagementService.add_order(email,reqres));
     }
 
-    @DeleteMapping("admin/delete_order/{orderId}")
+    @DeleteMapping("/admin/delete_order/{orderId}")
     public ResponseEntity<OrderDto> delete_order(@PathVariable Integer orderId){
         return ResponseEntity.ok(usersManagementService.delete_order(orderId));
     }
@@ -117,8 +118,8 @@ public class UserManagementController {
 
     //zwraca jsona ze szczegółami danego zamówienia
     @GetMapping("/public/order-products/{orderId}")
-    public ResponseEntity<ProductDto> getProductsByOrderId(@PathVariable Integer orderId) {
-        return ResponseEntity.ok(usersManagementService.getProductsByOrderId(orderId));
+    public ResponseEntity<ProductAndNumberDto> getProductsAndNumbersByOrderId(@PathVariable Integer orderId) {
+        return ResponseEntity.ok(usersManagementService.getProductsAndNumbersByOrderId(orderId));
     }
 
 
