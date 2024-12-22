@@ -2,9 +2,9 @@ package com.online_shop.usersmanagementsystem.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.online_shop.usersmanagementsystem.entity.OurUsers;
-import com.online_shop.usersmanagementsystem.entity.Products;
+import com.online_shop.usersmanagementsystem.entity.ProductsEntity;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,7 +22,8 @@ public class ProductDto {
     private String name;
     private String category;
     private String price;
-    private Products products;
-    private List<Products> ProductsList;
+    private ProductsEntity productsEntity;
+    private List<ProductsEntity> productsEntityList;
+//    private MultipartFile image;
 
 }

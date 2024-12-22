@@ -1,14 +1,13 @@
 package com.online_shop.usersmanagementsystem.config;
 
 
-import com.online_shop.usersmanagementsystem.service.JWTUtils;
-import com.online_shop.usersmanagementsystem.service.OurUserDetailsService;
+import com.online_shop.usersmanagementsystem.service.impl.JWTUtilsImpl;
+import com.online_shop.usersmanagementsystem.service.impl.OurUserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,10 +23,10 @@ import java.io.IOException;
 public class JWTAuthFilter extends OncePerRequestFilter {
 
 
-    private JWTUtils jwtUtils;
+    private JWTUtilsImpl jwtUtils;
 
 
-    private OurUserDetailsService ourUserDetailsService;
+    private OurUserDetailsServiceImpl ourUserDetailsService;
 
 
     @Override

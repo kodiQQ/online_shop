@@ -15,8 +15,10 @@ function Login() {
 
         try {
             const userData = await UserService.login(email, password);
-            if (userData.refreshToken) {
-                localStorage.setItem('token', userData.refreshToken);
+            console.log(userData.token);
+            if (userData.token) {
+                sessionStorage.setItem('token', userData.token);
+                sessionStorage.setItem('role', userData.role);
                 navigate('/strona-glowna');
             } else {
                 setError(userData.error);

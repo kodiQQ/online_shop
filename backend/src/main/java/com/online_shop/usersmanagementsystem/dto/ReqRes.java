@@ -2,7 +2,7 @@ package com.online_shop.usersmanagementsystem.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.online_shop.usersmanagementsystem.entity.OurUsers;
+import com.online_shop.usersmanagementsystem.entity.OurUsersEntity;
 import lombok.Data;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class ReqRes {
     private String role;
     private String email;
     private String password;
-    private OurUsers ourUsers;
-    private List<OurUsers> ourUsersList;
+    private OurUsersEntity ourUsersEntity;
+    private List<OurUsersEntity> ourUsersEntityList;
 
 }

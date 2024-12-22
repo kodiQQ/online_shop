@@ -3,22 +3,30 @@ package com.online_shop.usersmanagementsystem.controller;
 import com.online_shop.usersmanagementsystem.dto.OrderDto;
 import com.online_shop.usersmanagementsystem.dto.ProductDto;
 import com.online_shop.usersmanagementsystem.dto.ReqRes;
-import com.online_shop.usersmanagementsystem.entity.OurUsers;
-import com.online_shop.usersmanagementsystem.entity.Products;
+import com.online_shop.usersmanagementsystem.entity.OurUsersEntity;
+import com.online_shop.usersmanagementsystem.service.FileStorageService;
 import com.online_shop.usersmanagementsystem.service.UsersManagementService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import static com.online_shop.usersmanagementsystem.constant.Constant.PHOTO_DIR;
+import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 
 @RestController
+@RequiredArgsConstructor
 public class UserManagementController {
-    @Autowired
-    private UsersManagementService usersManagementService;
+
+    private final UsersManagementService usersManagementService;
+    private final FileStorageService fileStorageService;
 
     @PostMapping("/auth/register")
     public ResponseEntity<ReqRes> regeister(@RequestBody ReqRes reg){
@@ -26,8 +34,12 @@ public class UserManagementController {
     }
 
     @PostMapping("/admin/add-product")
-    public ResponseEntity<ProductDto> add_product(@RequestBody ProductDto productDto){
-        return ResponseEntity.ok(usersManagementService.add_product(productDto));
+    public ResponseEntity<ProductDto> add_product(@RequestParam("file") MultipartFile file,ProductDto productDto) throws IOException{
+//        System.out.println("111111");
+        String imagePath = fileStorageService.storeFile(file);
+//        return ResponseEntity.ok(productDto);
+        return ResponseEntity.ok(usersManagementService.add_product(imagePath, productDto));
+//    return ResponseEntity.ok(new ProductDto());
     }
 
     @GetMapping("/public/get-all-products")
@@ -66,7 +78,7 @@ public class UserManagementController {
     }
 
     @PutMapping("/admin/update/{userId}")
-    public ResponseEntity<ReqRes> updateUser(@PathVariable Integer userId, @RequestBody OurUsers reqres){
+    public ResponseEntity<ReqRes> updateUser(@PathVariable Integer userId, @RequestBody OurUsersEntity reqres){
         return ResponseEntity.ok(usersManagementService.updateUser(userId, reqres));
     }
 
@@ -125,6 +137,12 @@ public class UserManagementController {
         String email = authentication.getName();
         int userId=usersManagementService.getIdByEmail(email);
         return ResponseEntity.ok(usersManagementService.getOrdersByUserId(userId));
+    }
+
+
+    @GetMapping(path="/public/product/image/{filename}", produces=IMAGE_PNG_VALUE)
+    public byte[] getPhoto(@PathVariable("filename") String fileName) throws IOException {
+        return Files.readAllBytes(Paths.get(PHOTO_DIR + fileName));
     }
 
 

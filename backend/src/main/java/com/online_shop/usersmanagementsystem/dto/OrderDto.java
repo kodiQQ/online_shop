@@ -2,9 +2,8 @@ package com.online_shop.usersmanagementsystem.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.online_shop.usersmanagementsystem.entity.Orders;
-import com.online_shop.usersmanagementsystem.entity.OurUsers;
-import com.online_shop.usersmanagementsystem.entity.Products;
+import com.online_shop.usersmanagementsystem.entity.OrdersEntity;
+import com.online_shop.usersmanagementsystem.entity.OurUsersEntity;
 import lombok.Data;
 
 import java.util.List;
@@ -19,8 +18,8 @@ public class OrderDto {
     private String token;
     private String refreshToken;
     private String expirationTime;
-    private OurUsers user_id;
+    private OurUsersEntity user_id;
     private List<Integer> products_id_list;
-    private Orders orders;
-    private List<Orders> OrdersList;
+    private OrdersEntity ordersEntity;
+    private List<OrdersEntity> ordersEntityList;
 }

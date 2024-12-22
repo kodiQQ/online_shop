@@ -123,8 +123,8 @@ function Register() {
                         required
                     >
                         <option value="">Wybierz rolę</option>
-                        <option value="user">Użytkownik</option>
-                        <option value="admin">Administrator</option>
+                        <option value="USER">Użytkownik</option>
+                        <option value="ADMIN">Administrator</option>
                     </select>
                 </div>
                 <button type="submit" className="register-submit-button">Zarejestruj się</button>

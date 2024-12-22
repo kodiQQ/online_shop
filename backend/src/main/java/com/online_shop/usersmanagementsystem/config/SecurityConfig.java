@@ -1,7 +1,7 @@
 package com.online_shop.usersmanagementsystem.config;
 
 
-import com.online_shop.usersmanagementsystem.service.OurUserDetailsService;
+import com.online_shop.usersmanagementsystem.service.impl.OurUserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Autowired
-    private OurUserDetailsService ourUserDetailsService;
+    private OurUserDetailsServiceImpl ourUserDetailsService;
     @Autowired
     private JWTAuthFilter jwtAuthFilter;
 

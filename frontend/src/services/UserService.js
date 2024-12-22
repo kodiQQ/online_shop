@@ -18,6 +18,36 @@ class UserService {
         return response.data;
     }
 
+    static async addProduct(formData,token) {
+
+        try {
+            const response = await fetch('http://localhost:8080/admin/add-product', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}` // Dodanie Bearer Tokena
+                },
+                body: formData // Wysłanie danych jako form-data
+            });
+
+            if (!response.ok) {
+                throw new Error('Błąd podczas dodawania produktu');
+            }
+
+            const data = await response.json();
+            console.log('Produkt dodany:', data);
+            // navigate('/products'); // Przekierowanie po sukcesie
+
+        } catch (err) {
+            // setError(err.message);
+            console.error('Błąd:', err);
+        }
+    }
+
+    static async getAllProducts() {
+        const response = await axios.get(`${UserService.BASE_URL}/public/get-all-products`);
+        return response.data.productsEntityList;
+    }
+
     static async getAllUsers() {
         const response = await axios.get(`${UserService.BASE_URL}/admin/get-all-users`, {
             headers: {
@@ -66,16 +96,20 @@ class UserService {
     /* auth checker */
 
     static isAuthenticated(){
-        const token = localStorage.getItem('token')
+        const token = sessionStorage.getItem('token')
         return !!token
     }
 
     static logout() {
-        localStorage.removeItem('token')
-        localStorage.removeItem('role')
+        sessionStorage.removeItem('token')
+        sessionStorage.removeItem('role')
+        window.location.reload();
+
+
     }
     static isAdmin(){
-        const role = localStorage.getItem('role')
+        const role = sessionStorage.getItem('role')
+        console.log(role)
         return role === 'ADMIN'
     }
 
