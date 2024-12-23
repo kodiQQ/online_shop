@@ -12,6 +12,7 @@ function Navbar() {
     return (
         <nav className="navbar">
 
+
             <div className="navbar-logo">
                 alledrogo
             </div>
@@ -27,6 +28,9 @@ function Navbar() {
                 {UserService.isAuthenticated() && <>
                     <Link to="/basket">
                         <button className="navbar-btn">Koszyk</button>
+                    </Link>
+                    <Link to="/myOrders">
+                        <button className="navbar-btn">Moje Zamówienia</button>
                     </Link>
                         <button onClick={handleLogout} className="navbar-btn">Wyloguj się</button>
                     </>}
