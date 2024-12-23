@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './Basket.css';
 import UserService from '../../services/UserService.js';
+import ProductsToOrder from '../../Classes/ProductsToOrder.js';
+import {getFirstTokens} from "eslint-plugin-react/lib/util/eslint.js";
 
 function Basket() {
     // Stany komponentu
@@ -47,15 +49,32 @@ function Basket() {
         });
     };
 
+
     const handleAddOrder = () => {
-        setProductsInBasket(prevBasket => {
-            const updatedBasket = prevBasket.filter(product => product.id !== productToDelete.id);
-            localStorage.setItem('basket', JSON.stringify(updatedBasket)); // Zapisujemy do localStorage
-            window.location.reload();
-
-            return updatedBasket; // Zwracamy nowy stan koszyka
-
-        });
+        // let productsAndNumbersList=[];
+        let productsToOrderList=[];
+        for (let i = 0; i < productsInBasket.length; i++) {
+            console.log(productsInBasket[i]);
+            console.log(productsInBasket[i].number);
+            let productToOrder= new ProductsToOrder(productsInBasket[i].id,productsInBasket[i].number);
+            console.log("productToOrder.toJSON()");
+            console.log(productToOrder.toJSON());
+            productsToOrderList.push(productToOrder.toJSON());
+        }
+        console.log("productsToOrderList");
+        console.log(productsToOrderList);
+        const formattedData = {
+            productsAndNumbersList: productsToOrderList.map(item => ({
+                productId: String(item.productId),          // Konwersja productId na string
+                productNumber: String(item.productNumber)         // Zmiana klucza z "number" na "productNumber"
+            }))
+        };
+        console.log("formattedData");
+        console.log(formattedData);
+        const resultJson = JSON.stringify(formattedData, null, 2); // Formatowanie JSON z wcięciem
+        console.log(resultJson);
+        // const jsonProductsToOrderList = JSON.stringify(productsToOrderList);
+        UserService.addOrder(resultJson,sessionStorage.getItem('token'));
     };
 
     const handleSetNumber = (product0, number) => {
@@ -63,7 +82,7 @@ function Basket() {
             // Tworzymy zaktualizowany koszyk
             const updatedBasket = prevBasket.map(product =>
                 product.id === product0.id
-                    ? { ...product, number: number || 0 } // Jeśli brak pola number, dodajemy je
+                    ? { ...product, number: Number(number) || 0 } // Jeśli brak pola number, dodajemy je
                     : product
             );
 

@@ -21,7 +21,7 @@ class UserService {
     static async addProduct(formData,token) {
 
         try {
-            const response = await fetch('http://localhost:8080/admin/add-product', {
+            const response = await fetch(`${UserService.BASE_URL}/admin/add-product`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}` // Dodanie Bearer Tokena
@@ -29,6 +29,33 @@ class UserService {
                 body: formData // Wysłanie danych jako form-data
             });
 
+            if (!response.ok) {
+                throw new Error('Błąd podczas dodawania produktu');
+            }
+
+            const data = await response.json();
+            console.log('Produkt dodany:', data);
+            // navigate('/products'); // Przekierowanie po sukcesie
+
+        } catch (err) {
+            // setError(err.message);
+            console.error('Błąd:', err);
+        }
+    }
+
+
+    static async addOrder(formData,token) {
+
+        try {
+            const response = await fetch(`${UserService.BASE_URL}/adminuser/add_order`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Dodanie Bearer Tokena
+                    'Content-Type': 'application/json' // Nagłówek JSON
+                },
+                body: formData // Wysłanie danych jako form-data
+            });
+            console.log(response);
             if (!response.ok) {
                 throw new Error('Błąd podczas dodawania produktu');
             }
