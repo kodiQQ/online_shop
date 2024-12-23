@@ -412,6 +412,7 @@ public class UsersManagementServiceImpl implements UsersManagementService {
                 List<OrdersEntity> ordersEntityList=new ArrayList<>();
                 for (int i = 0; i < orderIds.size(); i++) {
                     OrdersEntity ordersEntity = ordersRepo.findById(orderIds.get(i)).get();
+                    ordersEntity.setOurUser(null);
                     ordersEntityList.add(ordersEntity);
                 }
                 orderDto.setOrdersEntityList(ordersEntityList);
