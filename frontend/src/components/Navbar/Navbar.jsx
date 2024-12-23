@@ -17,13 +17,19 @@ function Navbar() {
                 alledrogo
             </div>
             <div className="navbar-links">
-                {!UserService.isAuthenticated() && <><Link to="/logowanie">
+                {!UserService.isAuthenticated() && <><Link to="/login">
                     <button className="navbar-btn">Zaloguj się</button>
                 </Link>
 
-                    <Link to="/rejestracja">
+                    <Link to="/register">
                         <button className="navbar-btn">Zarejestruj się</button>
                     </Link></>}
+
+                {UserService.isAdmin() && <>
+                    <Link to="/admin/allCustomersOrders">
+                        <button className="navbar-btn">Zamówienia klientów</button>
+                    </Link>
+                </>}
 
                 {UserService.isAuthenticated() && <>
                     <Link to="/basket">

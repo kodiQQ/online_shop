@@ -433,6 +433,26 @@ public class UsersManagementServiceImpl implements UsersManagementService {
 
 
     @Override
+    public OrderDto getAllOrders() {
+        OrderDto orderDto = new OrderDto();
+
+        try {
+            List<OrdersEntity> ordersEntityList = ordersRepo.findAll();
+            orderDto.setOrdersEntityList(ordersEntityList);
+            orderDto.setMessage("Orders fetched successfully");
+            orderDto.setStatusCode(200);
+
+        } catch (Exception e) {
+            orderDto.setStatusCode(500);
+            orderDto.setError("Error occurred: " + e.getMessage());
+        }
+
+        return orderDto;
+    }
+
+
+
+    @Override
     public ProductAndNumberDto getProductsAndNumbersByOrderId(Integer orderId) {
         ProductAndNumberDto productAndNumberDto = new ProductAndNumberDto();
 

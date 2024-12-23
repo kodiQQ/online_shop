@@ -70,10 +70,37 @@ class UserService {
         }
     }
 
-    static async getAllUsersOrders(token) {
+    static async getUserOrders(token) {
 
         try {
             const response = await fetch(`${UserService.BASE_URL}/adminuser/orders`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Dodanie Bearer Tokena
+                },
+            });
+            console.log(response);
+            if (!response.ok) {
+                throw new Error('Błąd podczas dodawania produktu');
+            }
+
+            const data = await response.json();
+            console.log("Datta");
+            console.log(data);
+            return data;
+            // navigate('/products'); // Przekierowanie po sukcesie
+
+        } catch (err) {
+            // setError(err.message);
+            console.error('Błąd:', err);
+        }
+    }
+
+
+    static async getAllCustomersOrders(token) {
+
+        try {
+            const response = await fetch(`${UserService.BASE_URL}/admin/allOrders`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`, // Dodanie Bearer Tokena

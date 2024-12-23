@@ -9,7 +9,7 @@ import AddProduct from "./pages/AddProduct/AddProduct.jsx";
 import Basket from "./pages/Basket/Basket.jsx";
 import UserService from "./services/UserService.js";
 import MyOrders from "./pages/MyOrders/MyOrders.jsx";
-
+import AllCustomersOrders from "./pages/AllCustomersOrders/AllCustomersOrders.jsx";
 
 
 function AppRoutes() {
@@ -45,6 +45,7 @@ function AppRoutes() {
             {UserService.adminOnly() && (
                 <>
                      <Route path="/admin/addProduct" element={renderLayout(<AddProduct />)} />
+                    <Route path="/admin/allCustomersOrders" element={renderLayout(<AllCustomersOrders />)} />
                     {/*<Route path="/admin/skin-management" element={<SkinManagementPage />} />*/}
                     {/*<Route path="/admin/user-management" element={<UserManagementPage />} />*/}
                     {/*<Route path="/update-user/:userId" element={<UpdateUser />} />*/}
