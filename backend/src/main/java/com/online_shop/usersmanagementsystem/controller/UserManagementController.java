@@ -140,6 +140,11 @@ public class UserManagementController {
         return ResponseEntity.ok(usersManagementService.getOrdersByUserId(userId));
     }
 
+    @GetMapping("/admin/allOrders")
+    public ResponseEntity<OrderDto> getAllOrders() {
+        return ResponseEntity.ok(usersManagementService.getAllOrders());
+    }
+
 
     @GetMapping(path="/public/product/image/{filename}", produces=IMAGE_PNG_VALUE)
     public byte[] getPhoto(@PathVariable("filename") String fileName) throws IOException {

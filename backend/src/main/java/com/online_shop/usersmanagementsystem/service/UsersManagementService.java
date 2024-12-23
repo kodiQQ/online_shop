@@ -22,6 +22,7 @@ public interface UsersManagementService{
     ProductDto add_product(String imagePath,ProductDto productDto);
     OrderDto add_order(String email, OrderDto reqres);
     OrderDto getOrdersByUserId(Integer userId);
+    OrderDto getAllOrders();
     ProductAndNumberDto getProductsAndNumbersByOrderId(Integer orderId);
     int getIdByEmail(String email);
 
