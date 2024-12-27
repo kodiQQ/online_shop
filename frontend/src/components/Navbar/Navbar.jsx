@@ -12,16 +12,18 @@ function Navbar() {
     return (
         <nav className="navbar">
 
+            <Link className="logo-link" to="/">
+                <div className="navbar-logo">
+                    alledrogo
+                </div>
+            </Link>
 
-            <div className="navbar-logo">
-                alledrogo
-            </div>
             <div className="navbar-links">
-                {!UserService.isAuthenticated() && <><Link to="/login">
+                {!UserService.isAuthenticated() && <><Link to="/logowanie">
                     <button className="navbar-btn">Zaloguj się</button>
                 </Link>
 
-                    <Link to="/register">
+                    <Link to="/rejestracja">
                         <button className="navbar-btn">Zarejestruj się</button>
                     </Link></>}
 

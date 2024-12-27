@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './Home.css';
 import UserService from '../../services/UserService.js';
+import { FaSearch } from "react-icons/fa";
+import {Link} from "react-router-dom";
 
 function Home() {
     // Stany komponentu
@@ -43,28 +45,43 @@ function Home() {
 
     return (
         <div className="home-container">
-            <h1>Ilość przedmiotów - {items_count}</h1>
+            <div className="top-content-container">
+                <h1 className="items-count">Ilość przedmiotów - {items_count}</h1>
 
-            {/* Pasek wyszukiwania */}
-            <input
-                type="text"
-                placeholder="Wyszukaj produkt..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-bar"
-            />
+                {/* Formularz wyszukiwania */}
+                <form
+                    className="search-form"
+                    onSubmit={(e) => {
+                        e.preventDefault(); // Zapobiega przeładowaniu strony
+                        fetchProducts(); // Opcjonalnie, jeśli chcesz odświeżyć produkty
+                    }}
+                >
+                    <input
+                        type="text"
+                        placeholder="Wyszukaj produkt..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="search-bar"
+                    />
+                    <button type="submit" className="search-btn"><FaSearch/> Szukaj</button>
+                </form>
+            </div>
+
 
             {/* Lista produktów */}
-
             <div className="productsContainer">
                 {filteredProducts.length === 0 ? (
                     <p>Brak produktów</p>
                 ) : (
                     filteredProducts.map((product) => (
                         <div className="product-container" key={product.id}>
-                            <img className="product-img" src={product.imageUrl} alt={product.name}/>
+                            <Link to={`/product/${product.id}`}>
+                                <img className="product-img" src={product.imageUrl} alt={product.name}/>
+                            </Link>
                             <div className="product-info">
-                                <p className="product-name">{product.name}</p>
+                                <Link to={`/product/${product.id}`}>
+                                    <p className="product-name">{product.name}</p>
+                                </Link>
                             </div>
                             <div className="product-actions">
                                 <p className="product-price">{product.price} zł</p>
@@ -73,12 +90,12 @@ function Home() {
                                 </button>
                             </div>
                         </div>
-
                     ))
                 )}
             </div>
         </div>
     );
+
 }
 
 export default Home;

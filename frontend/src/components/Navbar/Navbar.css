@@ -6,6 +6,10 @@
     background-color: #1d1d1d;
 }
 
+.logo-link {
+    text-decoration: none;
+}
+
 .navbar-logo {
     font-size: 36px;
     color: #ff6600;

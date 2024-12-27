@@ -10,6 +10,8 @@ import Basket from "./pages/Basket/Basket.jsx";
 import UserService from "./services/UserService.js";
 import MyOrders from "./pages/MyOrders/MyOrders.jsx";
 import AllCustomersOrders from "./pages/AllCustomersOrders/AllCustomersOrders.jsx";
+import ProductPage from "./pages/ProductPage/ProductPage.jsx";
+
 
 
 function AppRoutes() {
@@ -34,10 +36,11 @@ function AppRoutes() {
 
     return (<Router>
         <Routes>
-            <Route path="/" element={<Navigate to="/mainPage" />} />
-            <Route path="/mainPage" element={renderLayout(<Home />)} />
-            <Route path="/login" element={renderLayout(<Login />)} />
-            <Route path="/register" element={renderLayout(<Register />)} />
+            <Route path="/" element={<Navigate to="strona-glowna" />} />
+            <Route path="strona-glowna" element={renderLayout(<Home />)} />
+            <Route path="logowanie" element={renderLayout(<Login />)} />
+            <Route path="rejestracja" element={renderLayout(<Register />)} />
+            <Route path="product/{id}" element={renderLayout(<ProductPage />)} />
             {UserService.isAuthenticated() && (<>
                 <Route path="/basket" element={renderLayout(<Basket />)} />
                 <Route path="/myOrders" element={renderLayout(<MyOrders />)} />
