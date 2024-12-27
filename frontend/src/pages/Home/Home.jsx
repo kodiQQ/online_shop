@@ -71,7 +71,7 @@ function Home() {
             {/* Lista produktów */}
             <div className="productsContainer">
                 {filteredProducts.length === 0 ? (
-                    <p>Brak produktów</p>
+                    <p className="err-container"><span className="sad">:(</span><span className="msg"> Brak produktów</span></p>
                 ) : (
                     filteredProducts.map((product) => (
                         <div className="product-container" key={product.id}>

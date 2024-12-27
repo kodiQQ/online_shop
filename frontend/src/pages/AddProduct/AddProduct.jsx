@@ -39,6 +39,9 @@ function AddProduct() {
         const token = sessionStorage.getItem('token'); // Pobieranie tokena z lokalnego magazynu
 
         UserService.addProduct(formData, token);
+
+        alert('Pomyślnie dodano nowy produkt!');
+        navigate('/strona-glowna');
     };
 
     return (

@@ -47,7 +47,7 @@ function Register() {
             });
 
             alert('Zalogowano pomyślnie!');
-            navigate('/strona-glowna');
+            navigate('/logowanie');
 
         } catch (error) {
             console.error('Wystąpił błąd podczas rejestracji: ', error);

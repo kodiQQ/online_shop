@@ -19,7 +19,7 @@ function Login() {
             if (userData.token) {
                 sessionStorage.setItem('token', userData.token);
                 sessionStorage.setItem('role', userData.role);
-                navigate('/mainPage');
+                navigate('/strona-glowna');
             } else {
                 setError(userData.error);
             }

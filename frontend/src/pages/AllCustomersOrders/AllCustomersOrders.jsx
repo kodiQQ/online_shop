@@ -55,17 +55,19 @@ function AllCustomersOrders() {
 
     return (
         <div className="home-container">
-            <h1>Moja zamówienia</h1>
 
-            {/* Pasek wyszukiwania */}
-            <input
-                type="text"
-                placeholder="Wyszukaj produkt..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-bar"
-            />
+            <div className="top-content-container">
+                <h1 className="title">Zamówienia wszystkich klientów</h1>
 
+                {/* Pasek wyszukiwania */}
+                <input
+                    type="text"
+                    placeholder="Wyszukaj produkt..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="search-bar"
+                />
+            </div>
             {/* Lista produktów */}
             <div className="productsContainer">
                 {orderList.map((order,index0) => (

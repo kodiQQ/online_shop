@@ -97,44 +97,57 @@ function Basket() {
 
     return (
         <div className="home-container">
-            <h1>Koszyk</h1>
+            <div className="top-content-container">
 
-            {/* Pasek wyszukiwania */}
-            <input
-                type="text"
-                placeholder="Wyszukaj produkt..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-bar"
-            />
+                <h1 className="title">Koszyk</h1>
 
-            {/* Lista produktów */}
-            <div className="productsContainer">
-                {filteredProducts.map((product) => (
-                    <div className="product" key={product.id}>
-                        <p>{product.name}</p>
-                        <img className="productImg" src={product.imageUrl} alt={product.name} />
-                        <p>{product.price}</p>
-                        <button onClick={() => handleDeleteFromBasket(product)}>Usuń z koszyka</button>
-                        <form>
-                            <div className="addProduct-form-group">
-                                <input
-                                    type="number"
-                                    id="number"
-                                    value={product.number}
-                                    onChange={(e) => handleSetNumber(product,e.target.value)}
-                                    placeholder="Ilość"
-                                    required
-                                />
-                            </div>
-                            {/*<button type="submit">Zatwierdź</button>*/}
-                        </form>
-                    </div>
-                ))}
+                {/* Pasek wyszukiwania */}
+                <input
+                    type="text"
+                    placeholder="Wyszukaj produkt..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="search-bar"
+                />
             </div>
-            <button onClick={handleAddOrder}>Złóż zamówienie</button>
-        </div>
-    );
-}
+                {/* Lista produktów */}
+                <div className="productsContainer">
+                    {filteredProducts.length === 0 ? (
+                        <p className="err-container"><span className="sad">:(</span><span className="msg"> Brak produktów</span></p>
+                    ) : (
+                        filteredProducts.map((product) => (
+                            <div className="product-container" key={product.id}>
+                                <img className="product-img" src={product.imageUrl} alt={product.name}/>
+                                <p className="product-name">{product.name}</p>
+                                <p className="product-price">{product.price} zł</p>
 
-export default Basket;
+                                <form>
+                                    <div className="addProduct-form-group">
+                                        <input
+                                            type="number"
+                                            id="number"
+                                            value={product.number}
+                                            onChange={(e) => handleSetNumber(product, e.target.value)}
+                                            placeholder="Ilość"
+                                            required
+                                        />
+                                    </div>
+
+                                    <button className="add-btn" onClick={handleAddOrder}>
+                                        Złóż zamówienie
+                                    </button>
+
+                                    <button className="delete-product-btn"
+                                            onClick={() => handleDeleteFromBasket(product)}>Usuń z koszyka
+                                    </button>
+                                </form>
+                            </div>
+                        ))
+                    )}
+
+                </div>
+            </div>
+            );
+            }
+
+            export default Basket;
