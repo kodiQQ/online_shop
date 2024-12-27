@@ -8,6 +8,7 @@ import Register from './pages/Register/Register.jsx'
 import AddProduct from "./pages/AddProduct/AddProduct.jsx";
 import Basket from "./pages/Basket/Basket.jsx";
 import UserService from "./services/UserService.js";
+import ProductPage from "./pages/ProductPage/ProductPage.jsx";
 
 
 
@@ -37,6 +38,7 @@ function AppRoutes() {
             <Route path="strona-glowna" element={renderLayout(<Home />)} />
             <Route path="logowanie" element={renderLayout(<Login />)} />
             <Route path="rejestracja" element={renderLayout(<Register />)} />
+            <Route path="product/{id}" element={renderLayout(<ProductPage />)} />
             {UserService.isAuthenticated() && (<>
                 <Route path="/basket" element={renderLayout(<Basket />)} />
             </>)}

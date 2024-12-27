@@ -7,7 +7,7 @@ function AddProduct() {
 
     const [name, setName] = useState('');
     const [category, setCategory] = useState('');
-    const [price, setPrice] = useState(0);
+    const [price, setPrice] = useState();
 
     const [error, setError] = useState('');
     const navigate = useNavigate();
