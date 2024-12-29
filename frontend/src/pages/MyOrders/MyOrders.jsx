@@ -17,7 +17,7 @@ function MyOrders() {
         const fetchOrders = async () => {
             try {
                 const token = sessionStorage.getItem('token');
-                const ordersdata = await UserService.getAllUsersOrders(token); // Czekaj na dane
+                const ordersdata = await UserService.getUserOrders(token); // Czekaj na dane
                 // setOrdersData(data); // Zapisz dane w stanie
                 console.log('ordersData:');
                 console.log(ordersdata.ordersEntityList);
