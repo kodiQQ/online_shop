@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Basket.css';
 import UserService from '../../services/UserService.js';
 import ProductsToOrder from '../../Classes/ProductsToOrder.js';
@@ -10,6 +11,7 @@ function Basket() {
     const [searchTerm, setSearchTerm] = useState(''); // Stan dla wyszukiwania
     const [productsInBasket, setProductsInBasket] = useState([]); // Stan dla koszyka
     const [number, setNumber] = useState(1); // Stan dla koszyka
+    const navigate = useNavigate();
 
 
     // Pobieranie produktów po załadowaniu komponentu
@@ -75,6 +77,8 @@ function Basket() {
         console.log(resultJson);
         // const jsonProductsToOrderList = JSON.stringify(productsToOrderList);
         UserService.addOrder(resultJson,sessionStorage.getItem('token'));
+
+        navigate('/order-confirmation');
     };
 
     const handleSetNumber = (product0, number) => {

@@ -11,6 +11,7 @@ import UserService from "./services/UserService.js";
 import MyOrders from "./pages/MyOrders/MyOrders.jsx";
 import AllCustomersOrders from "./pages/AllCustomersOrders/AllCustomersOrders.jsx";
 import ProductPage from "./pages/ProductPage/ProductPage.jsx";
+import OrderConfirmation from "./pages/OrderConfirmation/OrderConfirmation.jsx"
 
 
 
@@ -44,6 +45,7 @@ function AppRoutes() {
             {UserService.isAuthenticated() && (<>
                 <Route path="/basket" element={renderLayout(<Basket />)} />
                 <Route path="/myOrders" element={renderLayout(<MyOrders />)} />
+                <Route path="/order-confirmation" element={renderLayout(<OrderConfirmation />)} />
             </>)}
             {UserService.adminOnly() && (
                 <>

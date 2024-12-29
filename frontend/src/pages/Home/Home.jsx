@@ -4,6 +4,7 @@ import UserService from '../../services/UserService.js';
 import { FaSearch } from "react-icons/fa";
 import {Link} from "react-router-dom";
 
+
 function Home() {
     // Stany komponentu
     const [products, setProducts] = useState([]);
@@ -41,6 +42,7 @@ function Home() {
             localStorage.setItem('basket', JSON.stringify(updatedBasket)); // Zapisujemy do localStorage
             return updatedBasket; // Zwracamy nowy stan koszyka
         });
+        window.alert("Produkt dodany do koszyka");
     };
 
     return (
@@ -85,8 +87,8 @@ function Home() {
                             </div>
                             <div className="product-actions">
                                 <p className="product-price">{product.price} zł</p>
-                                <button className="add-btn" onClick={() => handleAddToBasket(product)}>Dodaj do
-                                    koszyka
+                                <button className="add-btn" onClick={() => handleAddToBasket(product)}>
+                                    Dodaj do koszyka
                                 </button>
                             </div>
                         </div>

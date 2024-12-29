@@ -1,13 +1,15 @@
 import React from 'react';
 import './Navbar.css';
-import { Link } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import UserService from "../../services/UserService.js"
 
 function Navbar() {
+    const navigate = useNavigate();
 
     const handleLogout=()=>{
         console.log("Logout")
         UserService.logout()
+        navigate('/strona-glowna');
     }
     return (
         <nav className="navbar">
@@ -31,6 +33,10 @@ function Navbar() {
                     <Link to="/admin/allCustomersOrders">
                         <button className="navbar-btn">Zamówienia klientów</button>
                     </Link>
+
+                    <Link to="/admin/addProduct">
+                        <button className="navbar-btn">Dodaj produkt</button>
+                    </Link>
                 </>}
 
                 {UserService.isAuthenticated() && <>
@@ -42,9 +48,6 @@ function Navbar() {
                     </Link>
                         <button onClick={handleLogout} className="navbar-btn">Wyloguj się</button>
                     </>}
-
-
-
             </div>
         </nav>
     );

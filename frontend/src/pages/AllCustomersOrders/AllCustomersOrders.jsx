@@ -70,19 +70,18 @@ function AllCustomersOrders() {
             </div>
             {/* Lista produktów */}
             <div className="productsContainer">
-                {orderList.map((order,index0) => (
-                    <div className="order" key={order.id}>
-                        <p>Zamówienie numer {index0+1}</p>
-                        <p>Zamówienie użytkownika {order.ourUser.username}, ID użytkownika: {order.ourUser.id}</p>
-                        {order.productsAndNumbers.map((item, index) => ( // Użycie map() zamiast forEach()
-                            <li key={index}>
+                {orderList.map((order, index0) => (
+                    <div className="product-container" key={order.id}>
+                        <p>Nr zamówienia {index0 + 1}</p>
+                        <p>Użytkownik {order.ourUser.username}</p>
+                        <p>ID użytkownika: {order.ourUser.id}</p>
+                        {order.productsAndNumbers.map((item, index) => (
+                            <div className="productItem" key={index}>
                                 <img src={item.product.imageUrl} alt=""/>
-                                {item.product.name}
-                                Liczba: {item.number}
-
-                            </li>
+                                <p>{item.product.name}</p>
+                                <p>Ilość: {item.number}</p>
+                            </div>
                         ))}
-
                     </div>
                 ))}
             </div>

@@ -32,9 +32,21 @@
     border-radius: 5px;
     cursor: pointer;
     text-transform: uppercase;
-    transition: background-color 0.3s;
+    position: relative;
+    overflow: hidden;
 }
 
-.navbar-btn:hover {
-    background-color: #333333;
+.navbar-btn::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #ff6600;
+    transition: width 0.4s ease-out;
+}
+
+.navbar-btn:hover::after {
+    width: 100%;
 }
