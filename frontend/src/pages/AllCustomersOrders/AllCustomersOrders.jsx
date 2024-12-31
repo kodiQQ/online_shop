@@ -59,7 +59,6 @@ function AllCustomersOrders() {
             <div className="top-content-container">
                 <h1 className="title">Zamówienia wszystkich klientów</h1>
 
-                {/* Pasek wyszukiwania */}
                 <input
                     type="text"
                     placeholder="Wyszukaj produkt..."
@@ -68,7 +67,6 @@ function AllCustomersOrders() {
                     className="search-bar"
                 />
             </div>
-            {/* Lista produktów */}
             <div className="productsContainer">
                 {orderList.map((order, index0) => (
                     <div className="product-container" key={order.id}>
@@ -76,10 +74,12 @@ function AllCustomersOrders() {
                         <p>Użytkownik {order.ourUser.username}</p>
                         <p>ID użytkownika: {order.ourUser.id}</p>
                         {order.productsAndNumbers.map((item, index) => (
-                            <div className="productItem" key={index}>
-                                <img src={item.product.imageUrl} alt=""/>
-                                <p>{item.product.name}</p>
-                                <p>Ilość: {item.number}</p>
+                            <div className="productItem-container" key={index}>
+                                <div className="productItem">
+                                    <img src={item.product.imageUrl} alt=""/>
+                                    <p>{item.product.name}</p>
+                                    <p>Ilość: {item.number}</p>
+                                </div>
                             </div>
                         ))}
                     </div>

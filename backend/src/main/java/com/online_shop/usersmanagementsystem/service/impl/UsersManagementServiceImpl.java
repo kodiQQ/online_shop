@@ -57,7 +57,8 @@ public class UsersManagementServiceImpl implements UsersManagementService {
             OurUsersEntity ourUser = new OurUsersEntity();
             ourUser.setEmail(registrationRequest.getEmail());
             ourUser.setCity(registrationRequest.getCity());
-            ourUser.setRole(registrationRequest.getRole());
+//            ourUser.setRole(registrationRequest.getRole());
+            ourUser.setRole("USER");
             ourUser.setName(registrationRequest.getName());
             ourUser.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
             OurUsersEntity ourUsersEntityResult = usersRepo.save(ourUser);
@@ -322,6 +323,7 @@ public class UsersManagementServiceImpl implements UsersManagementService {
                     .name(productDto.getName())
                     .category(productDto.getCategory())
                     .price(productDto.getPrice())
+                    .description(productDto.getDescription())
                     .imageUrl(BASE_URL+"/public/product/image/"+imagePath)
                     .build();
 

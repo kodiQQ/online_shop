@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import './Basket.css';
 import UserService from '../../services/UserService.js';
 import ProductsToOrder from '../../Classes/ProductsToOrder.js';
+import { FaTrashAlt } from "react-icons/fa";
 import {getFirstTokens} from "eslint-plugin-react/lib/util/eslint.js";
 
 function Basket() {
@@ -105,7 +106,6 @@ function Basket() {
 
                 <h1 className="title">Koszyk</h1>
 
-                {/* Pasek wyszukiwania */}
                 <input
                     type="text"
                     placeholder="Wyszukaj produkt..."
@@ -114,44 +114,47 @@ function Basket() {
                     className="search-bar"
                 />
             </div>
-                {/* Lista produktów */}
-                <div className="productsContainer">
-                    {filteredProducts.length === 0 ? (
-                        <p className="err-container"><span className="sad">:(</span><span className="msg"> Brak produktów</span></p>
-                    ) : (
-                        filteredProducts.map((product) => (
-                            <div className="product-container" key={product.id}>
-                                <img className="product-img" src={product.imageUrl} alt={product.name}/>
-                                <p className="product-name">{product.name}</p>
-                                <p className="product-price">{product.price} zł</p>
+            <div className="productsContainer">
+                {filteredProducts.length === 0 ? (
+                    <p className="err-container"><span className="sad">:(</span><span
+                        className="msg"> Brak produktów</span></p>
+                ) : (
+                    filteredProducts.map((product) => (
+                        <div className="product-container" key={product.id}>
+                            <img className="product-img" src={product.imageUrl} alt={product.name}/>
+                            <p className="product-name">{product.name}</p>
+                            <p className="product-price">{product.price} zł</p>
 
-                                <form>
-                                    <div className="addProduct-form-group">
-                                        <input
-                                            type="number"
-                                            id="number"
-                                            value={product.number}
-                                            onChange={(e) => handleSetNumber(product, e.target.value)}
-                                            placeholder="Ilość"
-                                            required
-                                        />
-                                    </div>
+                            <form>
+                            <div className="addProduct-form-group">
+                                    <input
+                                        type="number"
+                                        id="number"
+                                        value={product.number}
+                                        onChange={(e) => handleSetNumber(product, e.target.value)}
+                                        placeholder="Ilość"
+                                        required
+                                    />
+                                </div>
+                            </form>
 
-                                    <button className="add-btn" onClick={handleAddOrder}>
-                                        Złóż zamówienie
-                                    </button>
+                            <button className="delete-product-btn"
+                                    onClick={() => handleDeleteFromBasket(product)}><FaTrashAlt /> Usuń z koszyka
+                            </button>
 
-                                    <button className="delete-product-btn"
-                                            onClick={() => handleDeleteFromBasket(product)}>Usuń z koszyka
-                                    </button>
-                                </form>
-                            </div>
-                        ))
-                    )}
+                        </div>
+                    ))
+                )}
 
+                <div className="order-btn-container">
+                    <button className="order-btn" onClick={handleAddOrder}>
+                    Złóż zamówienie
+                    </button>
                 </div>
-            </div>
-            );
-            }
 
-            export default Basket;
+            </div>
+        </div>
+    );
+}
+
+export default Basket;

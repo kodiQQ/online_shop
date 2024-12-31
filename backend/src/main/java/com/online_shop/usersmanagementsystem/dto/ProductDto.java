@@ -22,6 +22,7 @@ public class ProductDto {
     private String name;
     private String category;
     private String price;
+    private String description;
     private ProductsEntity productsEntity;
     private List<ProductsEntity> productsEntityList;
 //    private MultipartFile image;

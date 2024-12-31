@@ -34,8 +34,16 @@ function Navbar() {
                         <button className="navbar-btn">Zamówienia klientów</button>
                     </Link>
 
+                    <Link to="/admin/user-page">
+                        <button className="navbar-btn">Panel użytkowników</button>
+                    </Link>
+
                     <Link to="/admin/addProduct">
                         <button className="navbar-btn">Dodaj produkt</button>
+                    </Link>
+
+                    <Link to="/admin/admin-product-page">
+                        <button className="navbar-btn">Panel produktów</button>
                     </Link>
                 </>}
 
@@ -46,8 +54,11 @@ function Navbar() {
                     <Link to="/myOrders">
                         <button className="navbar-btn">Moje Zamówienia</button>
                     </Link>
+                    <Link to="/profil">
+                        <button className="navbar-btn">Profil</button>
+                    </Link>
                         <button onClick={handleLogout} className="navbar-btn">Wyloguj się</button>
-                    </>}
+                </>}
             </div>
         </nav>
     );
