@@ -115,7 +115,6 @@ class UserService {
             console.log("Datta");
             console.log(data);
             return data;
-            // navigate('/products'); // Przekierowanie po sukcesie
 
         } catch (err) {
             // setError(err.message);
@@ -128,10 +127,15 @@ class UserService {
         return response.data.productsEntityList;
     }
 
+    static async getProductById(productId) {
+        const response = await axios.get(`${UserService.BASE_URL}/public/get-product-by-Id/${productId}`);
+        return response.data;
+    }
+
     static async getAllUsers() {
         const response = await axios.get(`${UserService.BASE_URL}/admin/get-all-users`, {
             headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                Authorization: `Bearer ${sessionStorage.getItem('token')}`,
             },
         });
         return response.data;
@@ -140,7 +144,7 @@ class UserService {
     static async getUserById(userId) {
         const response = await axios.get(`${UserService.BASE_URL}/admin/get-users/${userId}`, {
             headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                Authorization: `Bearer ${sessionStorage.getItem('token')}`,
             },
         });
         return response.data;
@@ -149,7 +153,7 @@ class UserService {
     static async updateUser(userId, userEntity) {
         const response = await axios.put(`${UserService.BASE_URL}/admin/update/${userId}`, userEntity, {
             headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                Authorization: `Bearer ${sessionStorage.getItem('token')}`,
             },
         });
         return response.data;
@@ -158,7 +162,7 @@ class UserService {
     static async deleteUser(userId) {
         await axios.delete(`${UserService.BASE_URL}/admin/delete-user/${userId}`, {
             headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                Authorization: `Bearer ${sessionStorage.getItem('token')}`,
             },
         });
     }
@@ -183,9 +187,6 @@ class UserService {
     static logout() {
         sessionStorage.removeItem('token')
         sessionStorage.removeItem('role')
-        window.location.reload();
-
-
     }
     static isAdmin(){
         const role = sessionStorage.getItem('role')
@@ -194,7 +195,7 @@ class UserService {
     }
 
     static isUser(){
-        const role = localStorage.getItem('role')
+        const role = sessionStorage.getItem('role')
         return role === 'USER'
     }
 

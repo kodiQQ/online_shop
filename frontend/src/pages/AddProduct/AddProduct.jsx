@@ -8,10 +8,11 @@ function AddProduct() {
     const [name, setName] = useState('');
     const [category, setCategory] = useState('');
     const [price, setPrice] = useState();
+    const [description, setDescription] = useState('');
 
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    const [file, setFile] = useState(null); // Dodano stan dla obrazka
+    const [file, setFile] = useState(null);
 
 
     useEffect(() => {
@@ -22,7 +23,7 @@ function AddProduct() {
     }, []);
 
     const handleFileChange = (e) => {
-        setFile(e.target.files[0]); // Wczytywanie pliku do stanu
+        setFile(e.target.files[0]);
     };
 
     const handleSubmit = async (e) => {
@@ -32,11 +33,12 @@ function AddProduct() {
         formData.append('name', name);
         formData.append('category', category);
         formData.append('price', price);
+        formData.append('description', description);
         if (file) {
-            formData.append('file', file); // Dodanie pliku do żądania
+            formData.append('file', file);
         }
 
-        const token = sessionStorage.getItem('token'); // Pobieranie tokena z lokalnego magazynu
+        const token = sessionStorage.getItem('token');
 
         UserService.addProduct(formData, token);
 
@@ -68,6 +70,7 @@ function AddProduct() {
                         required
                     />
                 </div>
+
                 <div className="addProduct-form-group">
                     <input
                         type="price"
@@ -81,10 +84,21 @@ function AddProduct() {
 
                 <div className="addProduct-form-group">
                     <input
+                        type="description"
+                        id="description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        placeholder="Opis produktu"
+                        required
+                    />
+                </div>
+
+                <div className="addProduct-form-group">
+                    <input
                         type="file"
                         id="file"
                         accept="file/*"
-                        onChange={handleFileChange} // Obsługa zmiany obrazka
+                        onChange={handleFileChange}
                     />
                 </div>
 

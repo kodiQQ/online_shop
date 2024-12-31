@@ -12,8 +12,8 @@ function Register() {
         email: '',
         password: '',
         confirmPassword: '', // Pole tylko frontendowe,
-        city: '',
-        role: ''
+        city: ''
+        // role: ''
     });
 
     const handleInputChange = (e) => {
@@ -42,8 +42,8 @@ function Register() {
                 email: '',
                 password: '',
                 confirmPassword: '',
-                city: '',
-                role: ''
+                city: ''
+                // role: 'USER'
             });
 
             alert('Zalogowano pomyślnie!');
@@ -114,19 +114,19 @@ function Register() {
                         required
                     />
                 </div>
-                <div className="register-form-group">
-                    <select
-                        id="role"
-                        name="role"
-                        value={formData.role}
-                        onChange={handleInputChange}
-                        required
-                    >
-                        <option value="">Wybierz rolę</option>
-                        <option value="USER">Użytkownik</option>
-                        <option value="ADMIN">Administrator</option>
-                    </select>
-                </div>
+                {/*<div className="register-form-group">*/}
+                {/*    <select*/}
+                {/*        id="role"*/}
+                {/*        name="role"*/}
+                {/*        value={formData.role}*/}
+                {/*        onChange={handleInputChange}*/}
+                {/*        required*/}
+                {/*    >*/}
+                {/*        <option value="">Wybierz rolę</option>*/}
+                {/*        <option value="USER">Użytkownik</option>*/}
+                {/*        <option value="ADMIN">Administrator</option>*/}
+                {/*    </select>*/}
+                {/*</div>*/}
                 <button type="submit" className="register-submit-button">Zarejestruj się</button>
             </form>
         </div>

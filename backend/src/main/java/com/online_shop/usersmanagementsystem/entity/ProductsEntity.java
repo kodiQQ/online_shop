@@ -19,5 +19,8 @@ public class ProductsEntity {
     private String name;
     private String category;
     private String price;
+
+    @Column(length = 1000)
+    private String description;
     private String imageUrl;
 }

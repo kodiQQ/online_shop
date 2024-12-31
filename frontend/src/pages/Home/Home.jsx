@@ -6,20 +6,17 @@ import {Link} from "react-router-dom";
 
 
 function Home() {
-    // Stany komponentu
     const [products, setProducts] = useState([]);
-    const [searchTerm, setSearchTerm] = useState(''); // Stan dla wyszukiwania
-    const [basket, setBasket] = useState([]); // Stan dla koszyka
+    const [searchTerm, setSearchTerm] = useState('');
+    const [basket, setBasket] = useState([]);
     const [items_count, setItems_count] = useState(0);
 
-    // Pobieranie produktów po załadowaniu komponentu
     useEffect(() => {
         fetchProducts()
-        const savedBasket = JSON.parse(localStorage.getItem('basket')) || []; // Pobierz dane lub pustą tablicę
-        setBasket(savedBasket); // Ustaw koszyk
+        const savedBasket = JSON.parse(localStorage.getItem('basket')) || [];
+        setBasket(savedBasket);
     }, []);
 
-    // Funkcja pobierająca produkty z serwera
     const fetchProducts = async () => {
         try {
             const productList = await UserService.getAllProducts();
@@ -30,12 +27,10 @@ function Home() {
         }
     };
 
-    // Filtrowanie produktów według nazwy
     const filteredProducts = products.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // Funkcja dodająca produkt do koszyka
     const handleAddToBasket = (product) => {
         setBasket(prevBasket => {
             const updatedBasket = [...prevBasket, product]; // Tworzymy zaktualizowany koszyk
@@ -50,12 +45,11 @@ function Home() {
             <div className="top-content-container">
                 <h1 className="items-count">Ilość przedmiotów - {items_count}</h1>
 
-                {/* Formularz wyszukiwania */}
                 <form
                     className="search-form"
                     onSubmit={(e) => {
-                        e.preventDefault(); // Zapobiega przeładowaniu strony
-                        fetchProducts(); // Opcjonalnie, jeśli chcesz odświeżyć produkty
+                        e.preventDefault();
+                        fetchProducts();
                     }}
                 >
                     <input
@@ -70,7 +64,6 @@ function Home() {
             </div>
 
 
-            {/* Lista produktów */}
             <div className="productsContainer">
                 {filteredProducts.length === 0 ? (
                     <p className="err-container"><span className="sad">:(</span><span className="msg"> Brak produktów</span></p>

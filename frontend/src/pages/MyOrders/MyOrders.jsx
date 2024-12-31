@@ -1,17 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './MyOrders.css';
 import UserService from '../../services/UserService.js';
-import ProductsToOrder from '../../Classes/ProductsToOrder.js';
-import {getFirstTokens} from "eslint-plugin-react/lib/util/eslint.js";
 
 function MyOrders() {
-    // Stany komponentu
     const [orderList, setOrderList] = useState([]);
-    const [searchTerm, setSearchTerm] = useState(''); // Stan dla wyszukiwania
-
-
-
-
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -23,7 +16,6 @@ function MyOrders() {
                 console.log(ordersdata.ordersEntityList);
                 setOrderList(ordersdata.ordersEntityList)
 
-                // Zaloguj dane
             } catch (error) {
                 console.error('Błąd podczas ładowania zamówień:', error);
             }
@@ -58,7 +50,6 @@ function MyOrders() {
             <div className="top-content-container">
                 <h1 className="title">Moje zamówienia</h1>
 
-                {/* Pasek wyszukiwania */}
                 <input
                     type="text"
                     placeholder="Wyszukaj produkt..."
@@ -67,7 +58,6 @@ function MyOrders() {
                     className="search-bar"
                 />
             </div>
-            {/* Lista produktów */}
             <div className="productsContainer">
                 {orderList.map((order,index0) => (
                     <div className="order" key={order.id}>

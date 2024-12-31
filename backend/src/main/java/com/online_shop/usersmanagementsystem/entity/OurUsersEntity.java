@@ -20,6 +20,8 @@ public class OurUsersEntity implements UserDetails {
     private String name;
     private String password;
     private String city;
+
+    @Column(nullable = false, columnDefinition = "varchar(255) default 'USER'")
     private String role;
 
     @Override
