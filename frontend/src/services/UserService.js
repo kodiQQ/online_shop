@@ -115,6 +115,7 @@ class UserService {
             console.log("Datta");
             console.log(data);
             return data;
+            // navigate('/products'); // Przekierowanie po sukcesie
 
         } catch (err) {
             // setError(err.message);
@@ -150,13 +151,71 @@ class UserService {
         return response.data;
     }
 
-    static async updateUser(userId, userEntity) {
-        const response = await axios.put(`${UserService.BASE_URL}/admin/update/${userId}`, userEntity, {
-            headers: {
-                Authorization: `Bearer ${sessionStorage.getItem('token')}`,
-            },
-        });
-        return response.data;
+    // static async updateUser(userId, userEntity) {
+    //     const response = await axios.put(`${UserService.BASE_URL}/admin/update/${userId}`, userEntity, {
+    //         headers: {
+    //             Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+    //         },
+    //     });
+    //     return response.data;
+    // }
+
+    static async updateUser(userId,formData,token) {
+        console.log("formdata");
+        console.log(token);
+        console.log(formData);
+        console.log(userId);
+        try {
+            const response = await fetch(`${UserService.BASE_URL}/admin/update-user/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', // to jest kluczowe!
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(formData),
+            });
+            console.log('Odpowiedz z backendu');
+            console.log(response);
+
+
+            if (!response.ok) {
+                throw new Error('Błąd podczas dodawania produktu');
+            }
+
+            const data = await response.json();
+            console.log('Produkt dodany:', data);
+            // navigate('/products'); // Przekierowanie po sukcesie
+
+        } catch (err) {
+            // setError(err.message);
+            console.error('Błąd:', err);
+        }
+    }
+
+    static async updateProduct(productId,formData,token) {
+        try {
+            const response = await fetch(`${UserService.BASE_URL}/admin/update-product/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}` // Dodanie Bearer Tokena
+                },
+                body: formData // Wysłanie danych jako form-data
+            });
+            console.log('Odpowiedz z backendu');
+            console.log(response);
+
+            if (!response.ok) {
+                throw new Error('Błąd podczas dodawania produktu');
+            }
+
+            const data = await response.json();
+            console.log('Produkt dodany:', data);
+            // navigate('/products'); // Przekierowanie po sukcesie
+
+        } catch (err) {
+            // setError(err.message);
+            console.error('Błąd:', err);
+        }
     }
 
     static async deleteUser(userId) {
@@ -187,7 +246,10 @@ class UserService {
     static logout() {
         sessionStorage.removeItem('token')
         sessionStorage.removeItem('role')
+        sessionStorage.removeItem('basket')
+
     }
+
     static isAdmin(){
         const role = sessionStorage.getItem('role')
         console.log(role)

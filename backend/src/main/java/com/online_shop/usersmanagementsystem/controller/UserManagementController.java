@@ -78,9 +78,26 @@ public class UserManagementController {
 
     }
 
-    @PutMapping("/admin/update/{userId}")
-    public ResponseEntity<ReqRes> updateUser(@PathVariable Integer userId, @RequestBody OurUsersEntity reqres){
+    @PostMapping("/admin/update-user/{userId}")
+    public ResponseEntity<ReqRes> updateUser(@PathVariable Integer userId, @RequestBody ReqRes reqres){
         return ResponseEntity.ok(usersManagementService.updateUser(userId, reqres));
+    }
+
+//    @PutMapping("/admin/update-product/{productId}")
+//    public ResponseEntity<ProductDto> add_product(@RequestParam("file") MultipartFile file,ProductDto productDto) throws IOException{
+////        System.out.println("111111");
+//        String imagePath = fileStorageService.storeFile(file);
+////        return ResponseEntity.ok(productDto);
+//        return ResponseEntity.ok(usersManagementService.add_product(imagePath, productDto));
+////    return ResponseEntity.ok(new ProductDto());
+//    }
+
+
+    @PostMapping("/admin/update-product/{productId}")
+    public ResponseEntity<ProductDto> updateProduct(@RequestParam("file") MultipartFile file,ProductDto productDto, @PathVariable Integer productId) throws IOException{
+        System.out.println("1123213123");
+        String imagePath = fileStorageService.storeFile(file);
+        return ResponseEntity.ok(usersManagementService.updateProduct(productDto,productId,imagePath));
     }
 
     @GetMapping("/adminuser/get-profile")

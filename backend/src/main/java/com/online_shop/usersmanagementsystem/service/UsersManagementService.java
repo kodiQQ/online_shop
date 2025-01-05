@@ -5,6 +5,7 @@ import com.online_shop.usersmanagementsystem.dto.ProductAndNumberDto;
 import com.online_shop.usersmanagementsystem.dto.ProductDto;
 import com.online_shop.usersmanagementsystem.dto.ReqRes;
 import com.online_shop.usersmanagementsystem.entity.OurUsersEntity;
+import jakarta.persistence.criteria.CriteriaBuilder;
 
 public interface UsersManagementService{
     ReqRes register(ReqRes registrationRequest);
@@ -17,7 +18,7 @@ public interface UsersManagementService{
     ReqRes deleteUser(Integer userId);
     ProductDto deleteProduct(Integer productId);
     OrderDto delete_order(Integer orderId);
-    ReqRes updateUser(Integer userId, OurUsersEntity updatedUser);
+    ReqRes updateUser(Integer userId, ReqRes updatedUser);
     ReqRes getMyInfo(String email);
     ProductDto add_product(String imagePath,ProductDto productDto);
     OrderDto add_order(String email, OrderDto reqres);
@@ -25,5 +26,6 @@ public interface UsersManagementService{
     OrderDto getAllOrders();
     ProductAndNumberDto getProductsAndNumbersByOrderId(Integer orderId);
     int getIdByEmail(String email);
+    ProductDto updateProduct(ProductDto productDto, Integer productId,String imagePath);
 
 }

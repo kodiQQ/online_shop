@@ -255,7 +255,7 @@ public class UsersManagementServiceImpl implements UsersManagementService {
         return reqRes;
     }
     @Override
-    public ReqRes updateUser(Integer userId, OurUsersEntity updatedUser) {
+    public ReqRes updateUser(Integer userId, ReqRes updatedUser) {
         ReqRes reqRes = new ReqRes();
         try {
             Optional<OurUsersEntity> userOptional = usersRepo.findById(userId);
@@ -483,6 +483,21 @@ public class UsersManagementServiceImpl implements UsersManagementService {
             return user.get().getId();
         }
         return 0;
+    }
+    @Override
+    public ProductDto updateProduct(ProductDto productDto, Integer productId, String imagePath){
+
+        ProductsEntity product = ProductsEntity.builder()
+                .id(productId)
+                .name(productDto.getName())
+                .category(productDto.getCategory())
+                .price(productDto.getPrice())
+                .description(productDto.getDescription())
+                .imageUrl(BASE_URL+"/public/product/image/"+imagePath)
+                .build();
+
+        productsRepo.save(product);
+        return productDto;
     }
 
 

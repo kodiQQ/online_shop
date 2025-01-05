@@ -10,6 +10,7 @@ function Navbar() {
         console.log("Logout")
         UserService.logout()
         navigate('/strona-glowna');
+
     }
     return (
         <nav className="navbar">

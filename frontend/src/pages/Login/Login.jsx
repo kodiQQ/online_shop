@@ -20,6 +20,7 @@ function Login() {
                 sessionStorage.setItem('token', userData.token);
                 sessionStorage.setItem('role', userData.role);
                 navigate('/strona-glowna');
+                window.location.reload();
             } else {
                 setError(userData.error);
             }
