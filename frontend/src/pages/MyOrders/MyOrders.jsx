@@ -58,18 +58,50 @@ function MyOrders() {
                     className="search-bar"
                 />
             </div>
-            <div className="productsContainer">
-                {orderList.map((order,index0) => (
-                    <div className="order" key={order.id}>
-                        <p>Zamówienie numer {index0+1}</p>
-                        {order.productsAndNumbers.map((item, index) => ( // Użycie map() zamiast forEach()
-                            <li key={index}>
-                                <img src={item.product.imageUrl} alt=""/>
-                                {item.product.name}
-                                Liczba: {item.number}
+            {/*<div className="productsContainer">*/}
+            {/*    {orderList.map((order, index0) => (*/}
+            {/*        <div className="order" key={order.id}>*/}
+            {/*            <p>Zamówienie numer {index0 + 1}</p>*/}
+            {/*            {order.productsAndNumbers.map((item, index) => ( // Użycie map() zamiast forEach()*/}
+            {/*                <li key={index}>*/}
+            {/*                    <img src={item.product.imageUrl} alt=""/>*/}
+            {/*                    {item.product.name}*/}
+            {/*                    Liczba: {item.number}*/}
 
-                            </li>
-                        ))}
+            {/*                </li>*/}
+            {/*            ))}*/}
+
+            {/*        </div>*/}
+            {/*    ))}*/}
+            {/*</div>*/}
+            <div className="productsContainer">
+                {orderList.map((order, index0) => (
+                    <div className="product-container" key={order.id}>
+                        {/*{order.productsAndNumbers.map((item, index) => (*/}
+                        {/*    <div className="myOrders-productItem-container" key={index}>*/}
+                        {/*        <div className="myOrders-productItem">*/}
+                        {/*            <img src={item.product.imageUrl} alt=""/>*/}
+                        {/*            <p>{item.product.name}</p>*/}
+                        {/*            <p>Ilość: {item.number}</p>*/}
+                        {/*        </div>*/}
+                        {/*    </div>*/}
+                        {/*))}*/}
+
+
+                        <div className="offer-product-container" key={order.id}>
+                            <div className="orders-user-details" key={order.id}>
+                                <p style={{marginTop: "5px", marginBottom: "5px"}}>Nr zamówienia: {index0 + 1}</p>
+                            </div>
+                            {order.productsAndNumbers.map((item, index) => (
+                                <div className="productItem-container" key={index}>
+                                    <div className="productItem">
+                                        <img src={item.product.imageUrl} alt=""/>
+                                        <p>{item.product.name}</p>
+                                        <p>Ilość: {item.number}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
 
                     </div>
                 ))}

@@ -131,15 +131,18 @@ function UserPage() {
                             <p><strong>Rola: </strong> {user.role}</p>
                         </div>
                         <div className="actions">
-                            <button
-                                className="edit-user-btn"
-                                onClick={() => handleEditUser(user)}
-                            >
-                                Edytuj produkt
-                            </button>
-                            <button className="delete-product-btn" onClick={() => deleteUser(user.id)}>Usuń
-                                użytkownika
-                            </button>
+                            <div className="button-div">
+                                <button style={{width:'180px', float: 'right'}}
+                                    className="edit-user-btn"
+                                    onClick={() => handleEditUser(user)}
+                                >
+                                    Edytuj produkt
+                                </button>
+                                <button style={{width:'180px', float: 'right'}} className="delete-product-btn" onClick={() => deleteUser(user.id)}>Usuń
+                                    użytkownika
+                                </button>
+                            </div>
+
                         </div>
                     </div>
                 ))}

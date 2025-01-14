@@ -70,20 +70,51 @@ function AllCustomersOrders() {
             <div className="productsContainer">
                 {orderList.map((order, index0) => (
                     <div className="product-container" key={order.id}>
-                        <p>Nr zamówienia {index0 + 1}</p>
-                        <p>Użytkownik {order.ourUser.username}</p>
-                        <p>ID użytkownika: {order.ourUser.id}</p>
-                        {order.productsAndNumbers.map((item, index) => (
-                            <div className="productItem-container" key={index}>
-                                <div className="productItem">
-                                    <img src={item.product.imageUrl} alt=""/>
-                                    <p>{item.product.name}</p>
-                                    <p>Ilość: {item.number}</p>
-                                </div>
+                        <div className="offer-product-container" key={order.id}>
+                            <div className="orders-user-details" key={order.id}>
+                                <p style={{marginTop:"5px",marginBottom:"5px"}}>Nr zamówienia {index0 + 1}</p>
+                                <p style={{marginTop:"5px",marginBottom:"5px"}}> Użytkownik {order.ourUser.username}</p>
+                                <p style={{marginTop:"5px",marginBottom:"5px"}}>ID użytkownika: {order.ourUser.id}</p>
                             </div>
-                        ))}
+
+                            {order.productsAndNumbers.map((item, index) => (
+                                <div className="productItem-container" key={index}>
+                                    <div className="productItem">
+                                        <img src={item.product.imageUrl} alt=""/>
+                                        <p>{item.product.name}</p>
+                                        <p>Ilość: {item.number}</p>
+                                    </div>
+                                </div>
+                            ))}
+
+                            {/*<table className="productsTable">*/}
+                            {/*    <thead>*/}
+                            {/*    <tr>*/}
+                            {/*        <th>Obraz</th>*/}
+                            {/*        <th>Nazwa produktu</th>*/}
+                            {/*        <th>Ilość</th>*/}
+                            {/*    </tr>*/}
+                            {/*    </thead>*/}
+                            {/*    <tbody>*/}
+                            {/*    {order.productsAndNumbers.map((item, index) => (*/}
+                            {/*        <tr className="productItem-row" key={index}>*/}
+                            {/*            <td>*/}
+                            {/*                <img src={item.product.imageUrl} alt={item.product.name}/>*/}
+                            {/*            </td>*/}
+                            {/*            <td>{item.product.name}</td>*/}
+                            {/*            <td>{item.number}</td>*/}
+                            {/*        </tr>*/}
+                            {/*    ))}*/}
+                            {/*    </tbody>*/}
+                            {/*</table>*/}
+
+
+                        </div>
+
                     </div>
                 ))}
+
+
             </div>
         </div>
     );
