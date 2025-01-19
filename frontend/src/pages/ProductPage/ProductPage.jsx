@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './ProductPage.css';
 import UserService from '../../services/UserService.js';
+import ProductService from '../../services/ProductService.js';
 import { GrMoney } from "react-icons/gr";
 import { FaCalculator } from "react-icons/fa6";
 import { AiOutlineFileProtect } from "react-icons/ai";
@@ -16,7 +17,7 @@ function ProductPage() {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const response = await UserService.getProductById(productId);
+                const response = await ProductService.getProductById(productId);
                 setProduct(response.productsEntity);
                 console.log(response);
             } catch (err) {

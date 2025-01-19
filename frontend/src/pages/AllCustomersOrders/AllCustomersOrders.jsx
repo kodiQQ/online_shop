@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './AllCustomersOrders.css';
+import OrderService from "../../services/OrderService.js";
 import UserService from '../../services/UserService.js';
 import ProductsToOrder from '../../Classes/ProductsToOrder.js';
 import {getFirstTokens} from "eslint-plugin-react/lib/util/eslint.js";
@@ -17,7 +18,7 @@ function AllCustomersOrders() {
         const fetchOrders = async () => {
             try {
                 const token = sessionStorage.getItem('token');
-                const ordersdata = await UserService.getAllCustomersOrders(token); // Czekaj na dane
+                const ordersdata = await OrderService.getAllCustomersOrders(token); // Czekaj na dane
                 // setOrdersData(data); // Zapisz dane w stanie
                 console.log('ordersData:');
                 console.log(ordersdata.ordersEntityList);

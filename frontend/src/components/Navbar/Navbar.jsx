@@ -2,13 +2,14 @@ import React from 'react';
 import './Navbar.css';
 import {Link, useNavigate} from "react-router-dom";
 import UserService from "../../services/UserService.js"
+import AuthService from "../../services/AuthService.js"
 
 function Navbar() {
     const navigate = useNavigate();
 
     const handleLogout=()=>{
         console.log("Logout")
-        UserService.logout()
+        AuthService.logout()
         navigate('/strona-glowna');
 
     }
@@ -22,7 +23,7 @@ function Navbar() {
             </Link>
 
             <div className="navbar-links">
-                {!UserService.isAuthenticated() && <><Link to="/logowanie">
+                {!AuthService.isAuthenticated() && <><Link to="/logowanie">
                     <button className="navbar-btn">Zaloguj się</button>
                 </Link>
 
@@ -30,7 +31,7 @@ function Navbar() {
                         <button className="navbar-btn">Zarejestruj się</button>
                     </Link></>}
 
-                {UserService.isAdmin() && <>
+                {AuthService.isAdmin() && <>
                     <Link to="/admin/allCustomersOrders">
                         <button className="navbar-btn">Zamówienia klientów</button>
                     </Link>
@@ -48,7 +49,7 @@ function Navbar() {
                     </Link>
                 </>}
 
-                {UserService.isAuthenticated() && <>
+                {AuthService.isAuthenticated() && <>
                     <Link to="/basket">
                         <button className="navbar-btn">Koszyk</button>
                     </Link>

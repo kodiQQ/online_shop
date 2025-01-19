@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import UserService from '../../services/UserService';
+// import UserService from '../../services/UserService';
+import AuthService from '../../services/AuthService';
 import './Login.css';
 
 function Login() {
@@ -14,7 +15,7 @@ function Login() {
         e.preventDefault();
 
         try {
-            const userData = await UserService.login(email, password);
+            const userData = await AuthService.login(email, password);
             console.log(userData.token);
             if (userData.token) {
                 sessionStorage.setItem('token', userData.token);

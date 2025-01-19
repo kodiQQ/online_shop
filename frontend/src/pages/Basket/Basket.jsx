@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import './Basket.css';
 import UserService from '../../services/UserService.js';
+import OrderService from '../../services/OrderService.js';
 import ProductsToOrder from '../../Classes/ProductsToOrder.js';
 import { FaTrashAlt } from "react-icons/fa";
 import {getFirstTokens} from "eslint-plugin-react/lib/util/eslint.js";
@@ -77,7 +78,7 @@ function Basket() {
         const resultJson = JSON.stringify(formattedData, null, 2); // Formatowanie JSON z wcięciem
         console.log(resultJson);
         // const jsonProductsToOrderList = JSON.stringify(productsToOrderList);
-        UserService.addOrder(resultJson,sessionStorage.getItem('token'));
+        OrderService.addOrder(resultJson,sessionStorage.getItem('token'));
 
         navigate('/order-confirmation');
     };

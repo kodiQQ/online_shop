@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Home.css';
-import UserService from '../../services/UserService.js';
+// import UserService from '../../services/UserService.js';
+import ProductService from '../../services/ProductService.js';
 import { FaSearch } from "react-icons/fa";
 import {Link} from "react-router-dom";
 
@@ -19,7 +20,7 @@ function Home() {
 
     const fetchProducts = async () => {
         try {
-            const productList = await UserService.getAllProducts();
+            const productList = await ProductService.getAllProducts();
             setProducts(productList);
             setItems_count(productList.length);
         } catch (error) {

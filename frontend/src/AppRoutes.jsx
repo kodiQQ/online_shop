@@ -7,6 +7,7 @@ import Register from './pages/Register/Register.jsx'
 import AddProduct from "./pages/AddProduct/AddProduct.jsx";
 import Basket from "./pages/Basket/Basket.jsx";
 import UserService from "./services/UserService.js";
+import AuthService from "./services/AuthService.js"
 import MyOrders from "./pages/MyOrders/MyOrders.jsx";
 import AllCustomersOrders from "./pages/AllCustomersOrders/AllCustomersOrders.jsx";
 import ProductPage from "./pages/ProductPage/ProductPage.jsx";
@@ -41,13 +42,13 @@ function AppRoutes() {
             <Route path="logowanie" element={renderLayout(<Login />)} />
             <Route path="rejestracja" element={renderLayout(<Register />)} />
             <Route path="product/:productId" element={renderLayout(<ProductPage />)} />
-            {UserService.isAuthenticated() && (<>
+            {AuthService.isAuthenticated() && (<>
                 <Route path="/basket" element={renderLayout(<Basket />)} />
                 <Route path="/myOrders" element={renderLayout(<MyOrders />)} />
                 <Route path="/order-confirmation" element={renderLayout(<OrderConfirmation />)} />
                 <Route path="profil" element={renderLayout(<ProfilePage />)} />
             </>)}
-            {UserService.adminOnly() && (
+            {AuthService.adminOnly() && (
                 <>
                      <Route path="/admin/addProduct" element={renderLayout(<AddProduct />)} />
                     <Route path="/admin/allCustomersOrders" element={renderLayout(<AllCustomersOrders />)} />

@@ -6,6 +6,7 @@ import './AdminProductPage.css';
 function AdminProductPage() {
     const [products, setProducts] = useState([]);
     const [error, setError] = useState(null);
+    const [file, setFile] = useState(null);
 
     // Stan służący do przechowywania aktualnie edytowanego produktu
     const [editingProduct, setEditingProduct] = useState(null);
@@ -15,14 +16,14 @@ function AdminProductPage() {
         price: '',
         category: '',
         description: '',
-        imageUrl: ''
+        // imageUrl: ''
     });
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const token = sessionStorage.getItem('token');
-                const allProducts = await UserService.getAllProducts();
+                const allProducts = await ProductService.getAllProducts();
                 setProducts(allProducts);
             } catch (err) {
                 setError('Nie udało się pobrać produktów.');
@@ -33,10 +34,15 @@ function AdminProductPage() {
         fetchProducts();
     }, []);
 
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0]);
+    };
+
+
     const handleDeleteProduct = async (productId) => {
         try {
-            const token = sessionStorage.getItem('token');
-            await UserService.deleteProduct(productId, token);
+            // const token = sessionStorage.getItem('token');
+            await ProductService.deleteProduct(productId);
             setProducts(products.filter((product) => product.id !== productId));
         } catch (err) {
             setError('Nie udało się usunąć produktu.');
@@ -54,7 +60,7 @@ function AdminProductPage() {
             price: product.price,
             category: product.category,
             description: product.description,
-            imageUrl: product.imageUrl
+            // imageUrl: product.imageUrl
         });
 
     };
@@ -72,12 +78,27 @@ function AdminProductPage() {
     const handleUpdateProduct = async (e) => {
         e.preventDefault();
         try {
-            const token = sessionStorage.getItem('token');
-            console.log(token);
-            console.log(editingProduct.id);
-            console.log(editFormData);
+
+            const formData = new FormData();
+            console.log("JSON.stringify(editFormData)");
+            console.log(JSON.stringify(editFormData));
+
+            const productDtoBlob = new Blob(
+                [JSON.stringify(editFormData)],
+                { type: 'application/json' }
+            );
+            formData.append("productDto", productDtoBlob);
+
+
+            formData.append("productDto", JSON.stringify(editFormData));
+
+            console.log(formData.productDto);
+            if (file) {
+                formData.append('file', file);
+                console.log(file);
+            }
             // Wywołanie metody aktualizującej produkt w serwisie
-            await ProductService.updateProduct(editingProduct.id, editFormData, token);
+            await ProductService.updateProduct(editingProduct.id, formData);
 
             // Aktualizacja listy produktów w stanie – np. możemy pobrać je jeszcze raz,
             // lub zaktualizować tylko jeden produkt w tablicy:
@@ -113,7 +134,7 @@ function AdminProductPage() {
             price: '',
             category: '',
             description: '',
-            imageUrl: ''
+            // imageUrl: ''
         });
     };
 
@@ -225,10 +246,11 @@ function AdminProductPage() {
                                 id="file"
                                 accept="file/*"
                                 onChange={(e) =>
-                                    setEditFormData((prev) => ({
-                                        ...prev,
-                                        file: e.target.files[0] // np. przechowaj w state plik
-                                    }))
+                                    // setEditFormData((prev) => ({
+                                    //     ...prev,
+                                    //     file: e.target.files[0] // np. przechowaj w state plik
+                                    // }))
+                                    setFile(e.target.files[0])
                                 }
                             />
                         </div>

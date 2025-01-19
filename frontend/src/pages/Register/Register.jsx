@@ -35,7 +35,7 @@ function Register() {
             // Przygotowanie danych bez confirmPassword
             const { confirmPassword, ...dataToSend } = formData;
 
-            await UserService.register(dataToSend, token);
+            await AuthService.register(dataToSend, token);
 
             setFormData({
                 name: '',

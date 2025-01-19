@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserService from '../../services/UserService';
+import AuthService from '../../services/AuthService';
 import './AddProduct.css';
+import ProductService from "../../services/ProductService.js";
 
 function AddProduct() {
 
@@ -16,7 +18,7 @@ function AddProduct() {
 
 
     useEffect(() => {
-        console.log(UserService.isAdmin())
+        console.log(AuthService.isAdmin())
         // if (wholePrice<0){
         //   setWholePrice(0);
         // }
@@ -40,7 +42,7 @@ function AddProduct() {
 
         const token = sessionStorage.getItem('token');
 
-        UserService.addProduct(formData, token);
+        ProductService.addProduct(formData, token);
 
         alert('Pomyślnie dodano nowy produkt!');
         navigate('/strona-glowna');
