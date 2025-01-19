@@ -93,10 +93,17 @@ public class UserManagementController {
 //    }
 
 
-    @PostMapping("/admin/update-product/{productId}")
-    public ResponseEntity<ProductDto> updateProduct(@RequestParam("file") MultipartFile file,ProductDto productDto, @PathVariable Integer productId) throws IOException{
-        System.out.println("1123213123");
-        String imagePath = fileStorageService.storeFile(file);
+    @PutMapping("/admin/update-product/{productId}")
+    public ResponseEntity<ProductDto> updateProduct(@RequestParam(value = "file", required = false) MultipartFile file,
+                                                    @RequestPart("productDto") ProductDto productDto,
+                                                    @PathVariable Integer productId) throws IOException{
+//        System.out.println("1123213123");
+//        System.out.println(productDto);
+        String imagePath="";
+        if(file != null){
+            imagePath = fileStorageService.storeFile(file);
+        }
+
         return ResponseEntity.ok(usersManagementService.updateProduct(productDto,productId,imagePath));
     }
 

@@ -486,14 +486,23 @@ public class UsersManagementServiceImpl implements UsersManagementService {
     }
     @Override
     public ProductDto updateProduct(ProductDto productDto, Integer productId, String imagePath){
+        System.out.println("11111");
+        System.out.println(productDto);
+        Optional<ProductsEntity> oldProductEntityOptional=productsRepo.findById(productId);
+        ProductsEntity oldProductEntity=oldProductEntityOptional.get();
 
+        String currentImageUrl=oldProductEntity.getImageUrl();
+        if(imagePath!=""){
+            currentImageUrl=BASE_URL+"/public/product/image/"+imagePath;
+        }
+        System.out.println(productDto.getName());
         ProductsEntity product = ProductsEntity.builder()
                 .id(productId)
                 .name(productDto.getName())
                 .category(productDto.getCategory())
                 .price(productDto.getPrice())
                 .description(productDto.getDescription())
-                .imageUrl(BASE_URL+"/public/product/image/"+imagePath)
+                .imageUrl(currentImageUrl)
                 .build();
 
         productsRepo.save(product);
