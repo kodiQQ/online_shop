@@ -8,11 +8,14 @@ import { FaCalculator } from "react-icons/fa6";
 import { AiOutlineFileProtect } from "react-icons/ai";
 import { FaHeart } from "react-icons/fa";
 import { MdOutlineCompareArrows } from "react-icons/md";
+// import handleAddToBasket from "./../Home/Home.jsx"
 
 function ProductPage() {
     const { productId } = useParams(); // Pobieramy `id` z URL
     const [product, setProduct] = useState(null);
     const [error, setError] = useState(null);
+    const [basket, setBasket] = useState([]);
+
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -27,6 +30,17 @@ function ProductPage() {
 
         fetchProduct();
     }, [productId]);
+
+    const handleAddToBasket = (product) => {
+        setBasket(prevBasket => {
+            const updatedBasket = [...prevBasket, product]; // Tworzymy zaktualizowany koszyk
+            localStorage.setItem('basket', JSON.stringify(updatedBasket)); // Zapisujemy do localStorage
+            return updatedBasket; // Zwracamy nowy stan koszyka
+        });
+        window.alert("Produkt dodany do koszyka");
+    };
+
+
 
     const createDeliverDate = () => {
         const date = new Date();
@@ -60,7 +74,7 @@ function ProductPage() {
                 <div className="product-purchase-section">
                     <div className="product-purchase">
                         <p className="product-price"><span className="product-price-span">Cena: </span>{product.price} zł</p>
-                        <button className="buy-btn">Kup Teraz</button>
+                        <button className="buy-btn" onClick={() => handleAddToBasket(product)}>Dodaj do koszyka</button>
                     </div>
 
                     <div className="availability-shipping">
